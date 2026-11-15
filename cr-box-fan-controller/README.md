@@ -36,6 +36,7 @@ the same rail without tach.
 | `fab/cr-box-fan-controller-cpl-jlcpcb.csv` | Placement file for JLCPCB assembly |
 | `fab/cr-box-fan-controller-bom-hand-solder.csv` | Parts you buy and solder yourself |
 | `esphome/cr-box.yaml` | ESPHome firmware config |
+| `case/` | 3D-printable case (STL files and OpenSCAD source), see `case/README.md` |
 | `scripts/` | Generators: the board, schematic and fab files are built from `scripts/design.py` |
 
 ## Ordering from JLCPCB

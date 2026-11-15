@@ -44,24 +44,25 @@ the same rail without tach.
 1. Upload `fab/cr-box-fan-controller-gerbers.zip`. Defaults are fine: 2 layers, 1.6 mm, 1 oz copper.
 2. Turn on **PCB Assembly**, top side, and upload the BOM and CPL files from `fab/`.
 3. In the part-matching step, confirm every match.
-4. In the placement preview, check the orientation of **U1, U2, U4, Q3, D1, J1, J2 and J3** against
+4. In the placement preview, check the orientation of **U1, U4, Q3, D1 and J1** against
    `docs/board-assembly.png` and the pin-1 marks, and rotate any that are wrong.
 
-Three through-hole parts are in the JLCPCB BOM, so JLCPCB fits them; this may add a small
-hand-soldering fee. They are U2, the 5 V regulator module (K7805-500R3, C19188491), and the two fan
-headers J2 and J3 (Molex 47053-1000, C240840). U2's pin 1 (input) is the square pad nearest the
-USB-C connector. To fit any of them yourself instead, delete its line from the BOM and CPL files.
-
-The BOM and CPL also list J6 and J7, two low-profile (5 mm) 1×7 female headers (C27985232; the standard 8.5 mm part is C124418) that JLCPCB fits into the U3
-holes as sockets for the XIAO. They are not separate footprints on the board. Any
-5 V switching module in the 3-pin 7805 footprint works; a linear 7805 will overheat.
+JLCPCB fits only the surface-mount parts. The through-hole parts are left off its BOM, which
+avoids the through-hole assembly charge, three extended-part fees and some of the tariff.
+`fab/cr-box-fan-controller-bom-hand-solder.csv` lists them with LCSC numbers. To have JLCPCB fit
+the XIAO sockets after all, set `ASSEMBLE_XIAO_SOCKETS = True` in `scripts/gen_fab.py`.
 
 ### Parts you solder yourself
 
-| Ref | Part |
-|---|---|
-| U3 | Seeed XIAO ESP32-C6. It plugs into the two sockets, so it needs its own pin headers soldered on (or buy the pre-soldered version). |
-| J4, J5 | 1×4 2.54 mm pin headers, only if you add sensors |
+| Ref | Part | Notes |
+|---|---|---|
+| U2 | 5 V switching module, K7805-500R3 (LCSC C19188491) or any 5 V module in the 3-pin 7805 footprint | Printed face towards the centre of the board, pin 1 (Vin) in the square pad marked IN. A linear 7805 will overheat. |
+| J2, J3 | 4-pin PWM fan header, Molex 47053-1000 (C240840) | Locking ramp towards the bottom board edge, matching the printed outline. |
+| J6, J7 | 1×7 female header, 2.54 mm, 5 mm high (C27985232) | Sockets for the XIAO, in its two rows of holes. The 8.5 mm C124418 also fits but stands taller than the case allows for. |
+| U3 | Seeed XIAO ESP32-C6 | Plugs into the sockets, so it needs its own pin headers (or buy the pre-soldered version). |
+| J4, J5 | 1×4 2.54 mm pin headers | Only if you add sensors. |
+
+Solder the sockets with the XIAO plugged in, so they end up straight and lined up with its pins.
 
 ## Before you order
 

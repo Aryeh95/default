@@ -24,7 +24,11 @@ GERB = os.path.join(FAB, "gerbers")
 ROT_FIX = [(r"^SOT-23", 180), (r"^TSOT-23", 270), (r"^SSOP-", 270), (r"^FanPinHeader", 180)]
 
 
-# Sockets for the XIAO: fitted by JLCPCB into the U3 holes.  They have no
+# Through-hole parts are soldered by hand to keep the assembly fee and tariff down.
+# Set True to have JLCPCB fit the XIAO sockets as well.
+ASSEMBLE_XIAO_SOCKETS = False
+
+# Sockets for the XIAO, in the U3 holes.  They have no
 # footprint of their own, so they only appear in the BOM and CPL.
 # (designator, x, y, rotation)
 XIAO_SOCKETS = [("J6", 34.0 - 7.62, 11.5, 90), ("J7", 34.0 + 7.62, 11.5, 90)]
@@ -61,7 +65,8 @@ def main():
     for ref, (fpid, value, _pos, _nets, lcsc, smt, _sym) in D.PARTS.items():
         if smt:
             groups.setdefault((value, fpid[1], lcsc), []).append(ref)
-    groups[XIAO_SOCKET_PART] = [d for d, _x, _y, _r in XIAO_SOCKETS]
+    if ASSEMBLE_XIAO_SOCKETS:
+        groups[XIAO_SOCKET_PART] = [d for d, _x, _y, _r in XIAO_SOCKETS]
     key = lambda r: (re.sub(r"\d", "", r), int(re.sub(r"\D", "", r)))
     with open(os.path.join(FAB, NAME + "-bom-jlcpcb.csv"), "w", newline="") as f:
         w = csv.writer(f)
@@ -72,10 +77,12 @@ def main():
     # parts you solder yourself
     with open(os.path.join(FAB, NAME + "-bom-hand-solder.csv"), "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["Designator", "Part", "Footprint"])
-        for ref, (fpid, value, _pos, _nets, _lcsc, smt, _sym) in D.PARTS.items():
+        w.writerow(["Designator", "Qty per board", "Part", "Footprint", "LCSC Part #"])
+        for ref, (fpid, value, _pos, _nets, lcsc, smt, _sym) in D.PARTS.items():
             if not smt:
-                w.writerow([ref, value, fpid[1]])
+                w.writerow([ref, 1, value, fpid[1], lcsc])
+        if not ASSEMBLE_XIAO_SOCKETS:
+            w.writerow([",".join(d for d, *_ in XIAO_SOCKETS), len(XIAO_SOCKETS), *XIAO_SOCKET_PART])
 
     with open(os.path.join(FAB, NAME + "-cpl-jlcpcb.csv"), "w", newline="") as f:
         w = csv.writer(f)
@@ -95,7 +102,7 @@ def main():
                     rot += fix
             w.writerow([ref, "%.3fmm" % pcbnew.ToMM(pos.x), "%.3fmm" % -pcbnew.ToMM(pos.y), "Top",
                         "%d" % (rot % 360)])
-        for d, x, y, rot in XIAO_SOCKETS:
+        for d, x, y, rot in (XIAO_SOCKETS if ASSEMBLE_XIAO_SOCKETS else []):
             w.writerow([d, "%.3fmm" % x, "%.3fmm" % -y, "Top", "%d" % rot])
 
     run("kicad-cli", "sch", "export", "pdf", "-o", os.path.join(ROOT, "docs", "schematic.pdf"),

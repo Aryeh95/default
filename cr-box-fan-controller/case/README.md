@@ -50,9 +50,10 @@ that clamps the board down. The fan plugs go in through openings in the lid.
 The model was checked for collisions against simplified blocks of the tall parts, not real 3D
 models, so check these on the real board before printing a final version:
 
-- **XIAO height.** The model assumes the XIAO sits on the 5 mm sockets via standard headers with a
-  2.5 mm plastic spacer, which puts its top about 11 mm above the board. Space under the lid is
-  12 mm (`CLEAR`).
+- **XIAO height.** The model assumes 3.5 mm low-profile sockets (`SOCKET_H`) and short male pin
+  headers on the XIAO with a 2.5 mm plastic spacer (`HEADER_SPACER`). That puts the XIAO's USB-C
+  port about 8.6 mm above the board, which sets the notch in the back wall. Measure your assembled
+  board and change those two values if they differ. Space under the lid is 12 mm (`CLEAR`).
 - **USB plug sizes.** A USB-C cable whose plug body is larger than 13 × 7.5 mm will not seat fully
   in the power socket. Widen `J1_W` and `J1_H` if yours doesn't.
 - **Fan header height.** Molex 47053-1000 headers are about 11.4 mm tall in the model, just under

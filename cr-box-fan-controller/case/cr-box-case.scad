@@ -46,7 +46,10 @@ J1_W = 13.0;                  // wide enough for the plug's overmould
 J1_H = 7.5;
 // XIAO's own USB-C port on the top edge (used to flash it the first time)
 XIAO_X = 34.0;
-XIAO_USB_Z = 10.1;            // 5 mm socket + 2.5 mm header spacer + 1 mm XIAO PCB + 1.6 mm
+SOCKET_H = 3.5;               // height of the XIAO's female sockets (low-profile 3.5 mm type)
+HEADER_SPACER = 2.5;          // plastic spacer on the XIAO's own male pin headers
+XIAO_BOTTOM = SOCKET_H + HEADER_SPACER;   // underside of the XIAO above the board
+XIAO_USB_Z = XIAO_BOTTOM + 1.0 + 1.6;     // centre of the XIAO's USB-C port above the board
 XIAO_USB_W = 12.5;
 XIAO_USB_H = 7.5;
 // Fan headers J2 and J3 (Molex 47053-1000), body outlines from the PCB
@@ -198,8 +201,8 @@ module board_parts() {
     blk(8.6, 1.9, 20.2, 9.5, 10.2, "black");          // 5 V module U2
     blk(-0.4, 9.6, 7.0, 18.4, 3.3, "silver");         // USB-C socket J1
     for (f = FANS) blk(f[0], f[1], f[2], f[3], 11.4, "white");  // fan headers
-    blk(25.1, 0.8, 27.6, 22.2, 5.0, "black");         // XIAO sockets
-    blk(40.4, 0.8, 42.9, 22.2, 5.0, "black");
+    blk(25.1, 0.8, 27.6, 22.2, SOCKET_H, "black");    // XIAO sockets
+    blk(40.4, 0.8, 42.9, 22.2, SOCKET_H, "black");
     blk(25.1, 1.0, 42.9, 22.0, 1.0, "royalblue");     // XIAO PCB (drawn at the board, lifted below)
     blk(14.4, 24.0, 20.6, 30.0, 4.5, "dimgray");      // inductor L1
     blk(46.7, 15.2, 50.3, 38.4, 8.5, "black");        // sensor pin headers
@@ -207,11 +210,11 @@ module board_parts() {
 
 module xiao_model() {
     p = B(25.1, 22.0);
-    color("royalblue") translate([p[0], p[1], TOP_Z + 7.5]) cube([17.8, 21.0, 1.0]);
+    color("royalblue") translate([p[0], p[1], TOP_Z + XIAO_BOTTOM]) cube([17.8, 21.0, 1.0]);
     q = B(29.6, 7.0);
-    color("silver") translate([q[0], q[1], TOP_Z + 8.5]) cube([8.9, 7.3, 3.2]);          // USB-C
+    color("silver") translate([q[0], q[1], TOP_Z + XIAO_BOTTOM + 1]) cube([8.9, 7.3, 3.2]);          // USB-C
     r = B(26.5, 20.0);
-    color("silver") translate([r[0], r[1], TOP_Z + 8.5]) cube([15, 10, 2.4]);           // shield can
+    color("silver") translate([r[0], r[1], TOP_Z + XIAO_BOTTOM + 1]) cube([15, 10, 2.4]);           // shield can
 }
 
 module lid_in_place(lift = 0) translate([0, 0, BASE_H - LIP_H + lift]) lid();

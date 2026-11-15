@@ -43,20 +43,63 @@ output:
 
 switch:
   - platform: gpio
-    id: fan_power
+    id: fan_power           # 12 V fan rail (TPS54302 enable)
     pin: GPIO1
     restore_mode: ALWAYS_OFF
     internal: true
 
+globals:
+  - id: duty                # PWM level currently applied to the fans, 0..1
+    type: float
+    initial_value: '0'
+
 fan:
-  - platform: speed
+  - platform: template
+    id: purifier
     name: "Purifier Fan"
-    output: fan_pwm
+    speed_count: 100
     restore_mode: RESTORE_DEFAULT_ON
-    on_turn_on:
-      - switch.turn_on: fan_power
-    on_turn_off:
-      - switch.turn_off: fan_power
+    on_state:
+      - script.execute: apply_fan
+
+script:
+  # Applies the fan entity's state to the hardware.
+  # - The 12 V rail is only switched on while the charger supplies 15 V
+  #   ("Charger OK"); on a 5 V-only supply the fans stay off.
+  # - On start-up the fans begin at 20 % and ramp to the set speed in 5 % steps
+  #   every 100 ms, so 4-5 fans don't all draw full start-up current at once.
+  - id: apply_fan
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: 'return id(purifier).state && id(charger_ok).state;'
+          then:
+            - if:
+                condition:
+                  switch.is_off: fan_power
+                then:
+                  - lambda: |-
+                      id(duty) = 0.2f;
+                      id(fan_pwm).set_level(id(duty));
+                  - switch.turn_on: fan_power
+                  - delay: 500ms
+            - while:
+                condition:
+                  lambda: 'return fabsf(id(duty) - id(purifier).speed / 100.0f) > 0.001f;'
+                then:
+                  - lambda: |-
+                      const float target = id(purifier).speed / 100.0f;
+                      const float step = 0.05f;
+                      if (id(duty) < target) id(duty) = std::min(target, id(duty) + step);
+                      else id(duty) = std::max(target, id(duty) - step);
+                      id(fan_pwm).set_level(id(duty));
+                  - delay: 100ms
+          else:
+            - switch.turn_off: fan_power
+            - lambda: |-
+                id(duty) = 0.0f;
+                id(fan_pwm).set_level(0.0f);
 
 sensor:
   - platform: pulse_counter
@@ -73,10 +116,13 @@ sensor:
     id: vbus
     pin: GPIO0
     attenuation: 12db
-    update_interval: 10s
+    update_interval: 2s
     accuracy_decimals: 1
     filters:
       - multiply: 7.667     # (100k + 15k) / 15k
+      - sliding_window_moving_average:
+          window_size: 3
+          send_every: 1
 
 binary_sensor:
   - platform: gpio
@@ -86,13 +132,22 @@ binary_sensor:
       inverted: true
     entity_category: diagnostic
 
+  # Gates the 12 V fan rail: true while the charger supplies 15 V.
   - platform: template
+    id: charger_ok
     name: "Charger OK"
     device_class: power
     entity_category: diagnostic
-    lambda: 'return id(vbus).state > 13.5;'   # below this the fans will not reach full speed
+    lambda: 'return id(vbus).has_state() && id(vbus).state > 13.5;'
+    filters:
+      - delayed_off: 2s     # ignore a brief dip when the fans start
+    on_state:
+      - script.execute: apply_fan
 
-# Optional sensors on the headers, for example:
+# Optional sensors on the headers. Both headers use 3.3 V logic. The UART header
+# supplies 5 V power, which suits sensors like the PMS5003 or SEN55 (5 V power,
+# 3.3 V logic). A sensor with 5 V logic needs a voltage divider on its TX line.
+# For example:
 # i2c:
 #   sda: GPIO22
 #   scl: GPIO23

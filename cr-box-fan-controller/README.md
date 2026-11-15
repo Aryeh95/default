@@ -20,7 +20,8 @@ a prototype run and read [Before you order](#before-you-order).
   stops fans that would otherwise idle at 0 % PWM.
 - Drives the 25 kHz PWM line open-collector, as the 4-pin fan spec asks, and reads RPM from FAN1.
 - Reports the charger voltage and whether PD negotiation succeeded.
-- Breaks out I2C (3.3 V) and UART (5 V) headers for an air-quality sensor.
+- Breaks out I2C and UART headers for an air-quality sensor. Both use 3.3 V logic; the UART
+  header supplies 5 V power (see [Sensor headers](#sensor-headers)).
 
 Arctic P14 PWM PST fans daisy-chain, so the whole chain plugs into FAN1. FAN2 is a second header on
 the same rail without tach.
@@ -101,7 +102,26 @@ Flash `esphome/cr-box.yaml` over the XIAO's USB port the first time, then update
 device appears in Home Assistant as a fan with a speed slider plus RPM, input voltage and two
 diagnostic sensors. A PM2.5 automation can then set the speed.
 
-The fan rail stays off while the XIAO boots or if it is not fitted.
+The fan rail stays off while the XIAO boots or if it is not fitted. The firmware also:
+
+- only switches the 12 V rail on while the input is above 13.5 V ("Charger OK"), so the fans
+  stay off on a 5 V-only charger and turn on automatically once 15 V is available;
+- starts the fans at 20 % and ramps them to the set speed over about 1.5 seconds, so several
+  fans don't draw their start-up current at the same moment.
+
+## Sensor headers
+
+| Header | Pins | Power | Logic |
+|---|---|---|---|
+| I2C | G, 3V3, SDA, SCL | 3.3 V | 3.3 V, with 4.7 kΩ pull-ups on the board |
+| UART | G, 5V, RX, TX | 5 V | 3.3 V only |
+
+The XIAO's pins are not 5 V tolerant. Sensors powered from 5 V with 3.3 V logic, such as the
+PMS5003 or SEN55, connect directly. A sensor with 5 V logic needs a voltage divider (for example
+10 kΩ over 20 kΩ) on its TX line before the header's RX pin.
+
+Header RX is the XIAO's receive pin, so connect it to the sensor's TX, and header TX to the
+sensor's RX.
 
 ## Checks that were run
 

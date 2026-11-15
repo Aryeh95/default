@@ -60,21 +60,49 @@ def main():
     board = pcbnew.LoadBoard(PCB)
     fps = {fp.GetReference(): fp for fp in board.GetFootprints()}
 
-    # BOM for JLCPCB assembly (SMT parts only)
-    groups = {}
-    for ref, (fpid, value, _pos, _nets, lcsc, smt, _sym) in D.PARTS.items():
-        if smt:
-            groups.setdefault((value, fpid[1], lcsc), []).append(ref)
-    if ASSEMBLE_XIAO_SOCKETS:
-        groups[XIAO_SOCKET_PART] = [d for d, _x, _y, _r in XIAO_SOCKETS]
     key = lambda r: (re.sub(r"\d", "", r), int(re.sub(r"\D", "", r)))
-    with open(os.path.join(FAB, NAME + "-bom-jlcpcb.csv"), "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
-        for (value, fp, lcsc), refs in sorted(groups.items(), key=lambda kv: key(sorted(kv[1], key=key)[0])):
-            w.writerow([value, ",".join(sorted(refs, key=key)), fp, lcsc])
 
-    # parts you solder yourself
+    def write_bom_cpl(suffix, with_tht):
+        """with_tht: also have JLCPCB fit the through-hole parts that have an LCSC number."""
+        refs = [r for r, p in D.PARTS.items() if p[5] or (with_tht and p[4])]
+        sockets = XIAO_SOCKETS if (with_tht or ASSEMBLE_XIAO_SOCKETS) else []
+        groups = {}
+        for ref in refs:
+            fpid, value, _pos, _nets, lcsc, _smt, _sym = D.PARTS[ref]
+            groups.setdefault((value, fpid[1], lcsc), []).append(ref)
+        if sockets:
+            groups[XIAO_SOCKET_PART] = [d for d, _x, _y, _r in sockets]
+        with open(os.path.join(FAB, NAME + "-bom-jlcpcb" + suffix + ".csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
+            for (value, fp, lcsc), rs in sorted(groups.items(), key=lambda kv: key(sorted(kv[1], key=key)[0])):
+                w.writerow([value, ",".join(sorted(rs, key=key)), fp, lcsc])
+        with open(os.path.join(FAB, NAME + "-cpl-jlcpcb" + suffix + ".csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["Designator", "Mid X", "Mid Y", "Layer", "Rotation"])
+            for ref in sorted(refs, key=key):
+                fp = fps[ref]
+                pos = fp.GetPosition()
+                if fp.HasThroughHolePads():
+                    # KiCad puts the origin of these footprints on pin 1 (or, for the
+                    # USB-C socket, the body); JLCPCB places them by the centre of the pads
+                    pads = [p.GetPosition() for p in fp.Pads() if p.GetNumber()]
+                    pos = pcbnew.VECTOR2I((min(p.x for p in pads) + max(p.x for p in pads)) // 2,
+                                          (min(p.y for p in pads) + max(p.y for p in pads)) // 2)
+                rot = fp.GetOrientationDegrees()
+                for pat, fix in ROT_FIX:
+                    if re.match(pat, D.PARTS[ref][0][1]):
+                        rot += fix
+                w.writerow([ref, "%.3fmm" % pcbnew.ToMM(pos.x), "%.3fmm" % -pcbnew.ToMM(pos.y), "Top",
+                            "%d" % (rot % 360)])
+            for d, x, y, rot in sockets:
+                w.writerow([d, "%.3fmm" % x, "%.3fmm" % -y, "Top", "%d" % rot])
+
+    # default order: SMT only (Economic PCBA); the -with-tht pair is for comparing prices
+    write_bom_cpl("", False)
+    write_bom_cpl("-with-tht", True)
+
+    # parts you solder yourself (for the default order)
     with open(os.path.join(FAB, NAME + "-bom-hand-solder.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["Designator", "Qty per board", "Part", "Footprint", "LCSC Part #"])
@@ -83,27 +111,6 @@ def main():
                 w.writerow([ref, 1, value, fpid[1], lcsc])
         if not ASSEMBLE_XIAO_SOCKETS:
             w.writerow([",".join(d for d, *_ in XIAO_SOCKETS), len(XIAO_SOCKETS), *XIAO_SOCKET_PART])
-
-    with open(os.path.join(FAB, NAME + "-cpl-jlcpcb.csv"), "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["Designator", "Mid X", "Mid Y", "Layer", "Rotation"])
-        for ref in sorted((r for r, p in D.PARTS.items() if p[5]), key=key):
-            fp = fps[ref]
-            pos = fp.GetPosition()
-            if fp.HasThroughHolePads():
-                # KiCad puts the origin of these footprints on pin 1 (or, for the
-                # USB-C socket, the body); JLCPCB places them by the centre of the pads
-                pads = [p.GetPosition() for p in fp.Pads() if p.GetNumber()]
-                pos = pcbnew.VECTOR2I((min(p.x for p in pads) + max(p.x for p in pads)) // 2,
-                                      (min(p.y for p in pads) + max(p.y for p in pads)) // 2)
-            rot = fp.GetOrientationDegrees()
-            for pat, fix in ROT_FIX:
-                if re.match(pat, D.PARTS[ref][0][1]):
-                    rot += fix
-            w.writerow([ref, "%.3fmm" % pcbnew.ToMM(pos.x), "%.3fmm" % -pcbnew.ToMM(pos.y), "Top",
-                        "%d" % (rot % 360)])
-        for d, x, y, rot in (XIAO_SOCKETS if ASSEMBLE_XIAO_SOCKETS else []):
-            w.writerow([d, "%.3fmm" % x, "%.3fmm" % -y, "Top", "%d" % rot])
 
     run("kicad-cli", "sch", "export", "pdf", "-o", os.path.join(ROOT, "docs", "schematic.pdf"),
         os.path.join(ROOT, NAME + ".kicad_sch"))

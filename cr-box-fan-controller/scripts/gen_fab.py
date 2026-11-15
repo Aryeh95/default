@@ -24,6 +24,13 @@ GERB = os.path.join(FAB, "gerbers")
 ROT_FIX = [(r"^SOT-23", 180), (r"^TSOT-23", 270), (r"^SSOP-", 270)]
 
 
+# Sockets for the XIAO: fitted by JLCPCB into the U3 holes.  They have no
+# footprint of their own, so they only appear in the BOM and CPL.
+# (designator, x, y, rotation)
+XIAO_SOCKETS = [("J6", 34.0 - 7.62, 11.5, 90), ("J7", 34.0 + 7.62, 11.5, 90)]
+XIAO_SOCKET_PART = ("1x7 female header 2.54mm", "PinSocket_1x07_P2.54mm_Vertical", "C124418")
+
+
 def run(*args):
     r = subprocess.run(list(args), capture_output=True, text=True)
     if r.returncode:
@@ -54,6 +61,7 @@ def main():
     for ref, (fpid, value, _pos, _nets, lcsc, smt, _sym) in D.PARTS.items():
         if smt:
             groups.setdefault((value, fpid[1], lcsc), []).append(ref)
+    groups[XIAO_SOCKET_PART] = [d for d, _x, _y, _r in XIAO_SOCKETS]
     key = lambda r: (re.sub(r"\d", "", r), int(re.sub(r"\D", "", r)))
     with open(os.path.join(FAB, NAME + "-bom-jlcpcb.csv"), "w", newline="") as f:
         w = csv.writer(f)
@@ -87,6 +95,8 @@ def main():
                     rot += fix
             w.writerow([ref, "%.3fmm" % pcbnew.ToMM(pos.x), "%.3fmm" % -pcbnew.ToMM(pos.y), "Top",
                         "%d" % (rot % 360)])
+        for d, x, y, rot in XIAO_SOCKETS:
+            w.writerow([d, "%.3fmm" % x, "%.3fmm" % -y, "Top", "%d" % rot])
 
     run("kicad-cli", "sch", "export", "pdf", "-o", os.path.join(ROOT, "docs", "schematic.pdf"),
         os.path.join(ROOT, NAME + ".kicad_sch"))

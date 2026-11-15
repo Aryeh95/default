@@ -49,14 +49,17 @@ the same rail without tach.
 Three through-hole parts are in the JLCPCB BOM, so JLCPCB fits them; this may add a small
 hand-soldering fee. They are U2, the 5 V regulator module (K7805-500R3, C2992390), and the two fan
 headers J2 and J3 (Molex 47053-1000, C240840). U2's pin 1 (input) is the square pad nearest the
-USB-C connector. To fit any of them yourself instead, delete its line from the BOM and CPL files. Any
+USB-C connector. To fit any of them yourself instead, delete its line from the BOM and CPL files.
+
+The BOM and CPL also list J6 and J7, two 1×7 female headers (C124418) that JLCPCB fits into the U3
+holes as sockets for the XIAO. They are not separate footprints on the board. Any
 5 V switching module in the 3-pin 7805 footprint works; a linear 7805 will overheat.
 
 ### Parts you solder yourself
 
 | Ref | Part |
 |---|---|
-| U3 | Seeed XIAO ESP32-C6, on two 1×7 pin headers (or sockets) |
+| U3 | Seeed XIAO ESP32-C6. It plugs into the two sockets, so it needs its own pin headers soldered on (or buy the pre-soldered version). |
 | J4, J5 | 1×4 2.54 mm pin headers, only if you add sensors |
 
 ## Before you order

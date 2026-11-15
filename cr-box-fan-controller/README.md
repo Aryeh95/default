@@ -47,7 +47,7 @@ the same rail without tach.
    `docs/board-assembly.png` and the pin-1 marks, and rotate any that are wrong.
 
 Three through-hole parts are in the JLCPCB BOM, so JLCPCB fits them; this may add a small
-hand-soldering fee. They are U2, the 5 V regulator module (K7805-500R3, C2992390), and the two fan
+hand-soldering fee. They are U2, the 5 V regulator module (K7805-500R3, C19188491), and the two fan
 headers J2 and J3 (Molex 47053-1000, C240840). U2's pin 1 (input) is the square pad nearest the
 USB-C connector. To fit any of them yourself instead, delete its line from the BOM and CPL files.
 

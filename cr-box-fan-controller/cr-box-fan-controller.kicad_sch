@@ -929,7 +929,7 @@
 		(property "Value" "K7805-500R3 (5V 0.5A SIP-3 buck)" (at 54.61 200.32 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Converter_DCDC:Converter_DCDC_TRACO_TSR-1_THT" (at 54.61 194.31 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "" (at 54.61 194.31 0) (effects (font (size 1.27 1.27)) (hide yes)))
-		(property "LCSC" "C2992390" (at 54.61 194.31 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "LCSC" "C19188491" (at 54.61 194.31 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(pin "1" (uuid "7a3cfc72-4c34-51b8-9171-edd048e28734"))
 		(pin "2" (uuid "6d2128c3-77d9-51f0-9a93-1285b21d6a62"))
 		(pin "3" (uuid "e2635c37-ea19-51fa-8b3d-dfbdef95ad97"))

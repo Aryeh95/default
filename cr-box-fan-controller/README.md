@@ -43,15 +43,19 @@ the same rail without tach.
 1. Upload `fab/cr-box-fan-controller-gerbers.zip`. Defaults are fine: 2 layers, 1.6 mm, 1 oz copper.
 2. Turn on **PCB Assembly**, top side, and upload the BOM and CPL files from `fab/`.
 3. In the part-matching step, pick an inductor for **L1** (see below) and confirm every other match.
-4. In the placement preview, check the orientation of **U1, U4, Q3, D1 and J1** against
+4. In the placement preview, check the orientation of **U1, U2, U4, Q3, D1 and J1** against
    `docs/board-assembly.png` and the pin-1 marks, and rotate any that are wrong.
+
+U2, the 5 V regulator module (K7805-500R3, C2992390), is through-hole and is in the JLCPCB BOM, so
+JLCPCB fits it; this may add a small hand-soldering fee. Its pin 1 (input) is the square pad nearest
+the USB-C connector. To fit it yourself instead, delete its line from the BOM and CPL files. Any
+5 V switching module in the 3-pin 7805 footprint works; a linear 7805 will overheat.
 
 ### Parts you solder yourself
 
 | Ref | Part |
 |---|---|
 | U3 | Seeed XIAO ESP32-C6, on two 1×7 pin headers (or sockets) |
-| U2 | 5 V, 0.5 A switching regulator in the 3-pin 7805 footprint: Mornsun K7805-500R3, RECOM R-78E5.0-0.5 or Traco TSR 1-2450. A linear 7805 will overheat. |
 | J2, J3 | 4-pin PWM fan headers (Molex 47053-1000 or a generic "KF2510 4-pin fan header") |
 | J4, J5 | 1×4 2.54 mm pin headers, only if you add sensors |
 

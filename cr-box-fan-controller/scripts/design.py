@@ -45,8 +45,8 @@ PARTS = {
     "R12": (R0603, "15k", (22.8, 5.6, 0), {"1": "GND", "2": "VSENSE"}, "C22809", True, "Device:R"),
     "C7": (C0603, "100nF 50V", (22.8, 7.8, 0), {"1": "GND", "2": "VSENSE"}, "C14663", True, "Device:C"),
     # --- 5 V rail -----------------------------------------------------------
-    "U2": (("Converter_DCDC", "Converter_DCDC_TRACO_TSR-1_THT"), "5V 0.5A SIP-3 buck (K7805-500R3)",
-           (11.8, 7.5, 0), {"1": "VBUS", "2": "GND", "3": "+5V"}, "", False,
+    "U2": (("Converter_DCDC", "Converter_DCDC_TRACO_TSR-1_THT"), "K7805-500R3 (5V 0.5A SIP-3 buck)",
+           (11.8, 7.5, 0), {"1": "VBUS", "2": "GND", "3": "+5V"}, "C2992390", True,
            "Converter_DCDC:TSR_1-2450"),
     "C2": (C1206, "10uF 50V", (10.0, 11.6, 0), {"1": "VBUS", "2": "GND"}, "C13585", True, "Device:C"),
     "C3": (C0805, "22uF 25V", (20.3, 12.3, 90), {"1": "GND", "2": "+5V"}, "C45783", True, "Device:C"),

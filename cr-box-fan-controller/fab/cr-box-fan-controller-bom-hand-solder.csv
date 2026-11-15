@@ -1,6 +1,4 @@
 Designator,Part,Footprint
 U3,Seeed XIAO ESP32-C6,XIAO_THT
-J2,FAN1 (tach),FanPinHeader_1x04_P2.54mm_Vertical
-J3,FAN2,FanPinHeader_1x04_P2.54mm_Vertical
 J4,I2C,PinHeader_1x04_P2.54mm_Vertical
 J5,UART,PinHeader_1x04_P2.54mm_Vertical

@@ -75,7 +75,7 @@ def main():
         for ref in sorted((r for r, p in D.PARTS.items() if p[5]), key=key):
             fp = fps[ref]
             pos = fp.GetPosition()
-            if fp.HasThroughHolePads():
+            if all(p.GetDrillSize().x > 0 for p in fp.Pads() if p.GetNumber()):
                 # KiCad puts the origin of these footprints on pin 1; JLCPCB
                 # places a part by the centre of its pins
                 pads = [p.GetPosition() for p in fp.Pads() if p.GetNumber()]

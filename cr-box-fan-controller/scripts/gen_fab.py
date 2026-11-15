@@ -21,7 +21,7 @@ GERB = os.path.join(FAB, "gerbers")
 
 # JLCPCB's part orientation differs from KiCad's for some packages.  These are
 # the commonly used corrections; always confirm in JLCPCB's placement preview.
-ROT_FIX = [(r"^SOT-23", 180), (r"^TSOT-23", 270), (r"^SSOP-", 270)]
+ROT_FIX = [(r"^SOT-23", 180), (r"^TSOT-23", 270), (r"^SSOP-", 270), (r"^FanPinHeader", 180)]
 
 
 # Sockets for the XIAO: fitted by JLCPCB into the U3 holes.  They have no
@@ -83,9 +83,9 @@ def main():
         for ref in sorted((r for r, p in D.PARTS.items() if p[5]), key=key):
             fp = fps[ref]
             pos = fp.GetPosition()
-            if all(p.GetDrillSize().x > 0 for p in fp.Pads() if p.GetNumber()):
-                # KiCad puts the origin of these footprints on pin 1; JLCPCB
-                # places a part by the centre of its pins
+            if fp.HasThroughHolePads():
+                # KiCad puts the origin of these footprints on pin 1 (or, for the
+                # USB-C socket, the body); JLCPCB places them by the centre of the pads
                 pads = [p.GetPosition() for p in fp.Pads() if p.GetNumber()]
                 pos = pcbnew.VECTOR2I((min(p.x for p in pads) + max(p.x for p in pads)) // 2,
                                       (min(p.y for p in pads) + max(p.y for p in pads)) // 2)

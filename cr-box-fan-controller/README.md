@@ -14,8 +14,8 @@ a prototype run and read [Before you order](#before-you-order).
 - Takes power from any USB-C PD charger of 30 W or more. A CH224A requests 15 V, which every PD
   charger above 27 W must offer. (12 V is no longer a standard PD voltage, so the board does not
   depend on it.)
-- Steps 15 V down to a regulated 12 V fan rail with a TPS54302 buck converter, good for about 2 A
-  of fans.
+- Steps 15 V down to a regulated 12 V fan rail with a TPS54302 buck converter, good for about
+  1.5 A of fans (the limit is inductor L1, rated 2.2 A / 2.7 A).
 - Switches the fan rail fully off through the converter's enable pin, so "off" in Home Assistant
   stops fans that would otherwise idle at 0 % PWM.
 - Drives the 25 kHz PWM line open-collector, as the 4-pin fan spec asks, and reads RPM from FAN1.
@@ -42,7 +42,7 @@ the same rail without tach.
 
 1. Upload `fab/cr-box-fan-controller-gerbers.zip`. Defaults are fine: 2 layers, 1.6 mm, 1 oz copper.
 2. Turn on **PCB Assembly**, top side, and upload the BOM and CPL files from `fab/`.
-3. In the part-matching step, pick an inductor for **L1** (see below) and confirm every other match.
+3. In the part-matching step, confirm every match.
 4. In the placement preview, check the orientation of **U1, U2, U4, Q3, D1 and J1** against
    `docs/board-assembly.png` and the pin-1 marks, and rotate any that are wrong.
 
@@ -63,9 +63,8 @@ the USB-C connector. To fit it yourself instead, delete its line from the BOM an
 
 These are the things I could not verify from here:
 
-- **L1 has no JLCPCB part number.** Choose a shielded 15 µH inductor rated 3 A or more in the 6045
-  (6 × 6 mm) size, for example Changjiang FNR6045S150MT or Cenker CKCS6045-15uH, whichever is in
-  stock. The footprint is `L_Changjiang_FNR6045S`.
+- **Fan current above 1.5 A** needs a 15 µH inductor with a higher current rating than the
+  FNR6045S150MT in the BOM. Add up the rated current of your fans first.
 - **Capacitor, diode and transistor part numbers** (C1–C13, D1, Q3) are JLCPCB basic parts quoted
   from memory. The connector, both ICs and all resistors were looked up. Confirm each line in
   JLCPCB's matching step; any equivalent with the same value, package and voltage rating works.

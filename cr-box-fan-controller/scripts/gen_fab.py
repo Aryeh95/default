@@ -28,7 +28,7 @@ ROT_FIX = [(r"^SOT-23", 180), (r"^TSOT-23", 270), (r"^SSOP-", 270), (r"^FanPinHe
 # footprint of their own, so they only appear in the BOM and CPL.
 # (designator, x, y, rotation)
 XIAO_SOCKETS = [("J6", 34.0 - 7.62, 11.5, 90), ("J7", 34.0 + 7.62, 11.5, 90)]
-XIAO_SOCKET_PART = ("1x7 female header 2.54mm", "PinSocket_1x07_P2.54mm_Vertical", "C124418")
+XIAO_SOCKET_PART = ("1x7 female header 2.54mm, 5.0mm high", "PinSocket_1x07_P2.54mm_Vertical", "C27985232")
 
 
 def run(*args):

@@ -51,7 +51,7 @@ hand-soldering fee. They are U2, the 5 V regulator module (K7805-500R3, C2992390
 headers J2 and J3 (Molex 47053-1000, C240840). U2's pin 1 (input) is the square pad nearest the
 USB-C connector. To fit any of them yourself instead, delete its line from the BOM and CPL files.
 
-The BOM and CPL also list J6 and J7, two 1×7 female headers (C124418) that JLCPCB fits into the U3
+The BOM and CPL also list J6 and J7, two low-profile (5 mm) 1×7 female headers (C27985232; the standard 8.5 mm part is C124418) that JLCPCB fits into the U3
 holes as sockets for the XIAO. They are not separate footprints on the board. Any
 5 V switching module in the 3-pin 7805 footprint works; a linear 7805 will overheat.
 

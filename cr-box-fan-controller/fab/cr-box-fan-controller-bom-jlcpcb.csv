@@ -8,7 +8,7 @@ Comment,Designator,Footprint,LCSC Part #
 SS14,D1,D_SMA,C2480
 USB-C 6P TYPE-C-31-M-17,J1,USB_C_Receptacle_HRO_TYPE-C-31-M-17,C283540
 Molex 47053-1000,"J2,J3",FanPinHeader_1x04_P2.54mm_Vertical,C240840
-1x7 female header 2.54mm,"J6,J7",PinSocket_1x07_P2.54mm_Vertical,C124418
+"1x7 female header 2.54mm, 5.0mm high","J6,J7",PinSocket_1x07_P2.54mm_Vertical,C27985232
 15uH FNR6045S150MT,L1,L_Changjiang_FNR6045S,C168078
 MMBT3904,Q3,SOT-23,C20526
 0R,R1,R_1206_3216Metric,C17888

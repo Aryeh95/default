@@ -23,6 +23,10 @@ GERB = os.path.join(FAB, "gerbers")
 ROT_FIX = [(r"^SOT-23", 180), (r"^TSOT-23", 270), (r"^SSOP-", 270), (r"^FanPinHeader", 180)]
 
 
+# alternative fan-header parts quoted at JLCPCB (fitted by JLCPCB, Economic PCBA)
+FAN_HEADER_OPTIONS = [("C19795120", "Molex 470533000"), ("C2847671", "2510-4A 4-pin header 2.54mm")]
+
+
 def run(*args):
     r = subprocess.run(list(args), capture_output=True, text=True)
     if r.returncode:
@@ -84,6 +88,17 @@ def main():
     # default order: SMT only (Economic PCBA); the -with-tht pair is for comparing prices
     write_bom_cpl("", False)
     write_bom_cpl("-with-tht", True)
+    # the same with-headers files, with other JLCPCB part numbers for the fan headers
+    for lcsc, comment in FAN_HEADER_OPTIONS:
+        src = os.path.join(FAB, NAME + "-bom-jlcpcb-with-tht.csv")
+        rows = list(csv.reader(open(src, newline="")))
+        for r in rows:
+            if r[1] == "J2,J3":
+                r[0], r[3] = comment, lcsc
+        with open(os.path.join(FAB, NAME + "-bom-jlcpcb-fanhdr-%s.csv" % lcsc), "w", newline="") as f:
+            csv.writer(f).writerows(rows)
+        shutil.copy(os.path.join(FAB, NAME + "-cpl-jlcpcb-with-tht.csv"),
+                    os.path.join(FAB, NAME + "-cpl-jlcpcb-fanhdr-%s.csv" % lcsc))
 
     # parts you solder yourself (for the default order)
     with open(os.path.join(FAB, NAME + "-bom-hand-solder.csv"), "w", newline="") as f:

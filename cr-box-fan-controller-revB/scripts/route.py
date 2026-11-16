@@ -435,9 +435,11 @@ def manual(r):
     r.add_via("GND", 46.8, 15.6, 0.8, 0.4)
     g = r.add_track("+5V", T, [(40.5, 27.5), (42.13, 27.5)], 0.8)
     r.add_track("+5V", T, [(40.5, 30.5), (42.13, 30.5)], 0.8, g)
-    for y0, y1 in ((27.5, 25.9), (30.5, 32.1)):
-        g = r.add_track("GND", T, [(45.07, y0), (45.07, y1)], 0.6)
-        r.add_via("GND", 45.07, y1, 0.8, 0.4, g)
+    g = r.add_track("GND", T, [(45.07, 27.5), (45.07, 25.9)], 0.6)
+    r.add_via("GND", 45.07, 25.9, 0.8, 0.4, g)
+    # (kept clear of the "5V" label next to J5)
+    g = r.add_track("GND", T, [(45.07, 30.5), (45.07, 31.5), (44.0, 32.6)], 0.6)
+    r.add_via("GND", 44.0, 32.6, 0.8, 0.4, g)
 
 
 def _inside(px, py, poly):
@@ -539,7 +541,7 @@ def plan(board):
              ("CC_A", 0.2, {}), ("CC_B", 0.2, {}), ("VHV", 0.4, {}),
              ("+5V", 0.4, {"via": (0.8, 0.4)}), ("XIAO_5V", 0.5, {"via": (0.8, 0.4)}),
              ("+3V3", 0.4, {"via": (0.8, 0.4)}), ("VSENSE", 0.25, {"bottom_cost": 1.0}),
-             ("PD_PG", 0.25, {"bottom_cost": 1.0})]
+             ("PD_PG", 0.25, {"bottom_cost": 1.0}), ("FAN_TACH", 0.25, {"bottom_cost": 1.0})]
     out = [x for x in first if x[0] in nets]
     done = {x[0] for x in out} | {"GND"}
     out += [(n, 0.25, {"bottom_cost": 1.15}) for n in sorted(nets, key=hpwl) if n not in done]

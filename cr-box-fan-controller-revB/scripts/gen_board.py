@@ -291,17 +291,17 @@ def finish_silk(board):
         text(board, s, 46.9, 17.0 + 2.54 * i, 0.8, just="R")
     text(board, "UART", 48.5, 26.9, 0.9)
     for i, s in enumerate(("G", "5V", "RX", "TX")):
-        text(board, s, 46.9, 29.0 + 2.54 * i, 0.8, just="R")
+        # "5V" sits 0.7 mm low so it clears C20's pad
+        text(board, s, 46.9, 29.0 + 2.54 * i + (0.7 if s == "5V" else 0), 0.8, just="R")
     text(board, "12V BUCK", 12.0, 33.0, 0.9)
     text(board, "5V BUCK", 36.0, 32.6, 0.9)
     if D.VARIANT == "xiao":
-        text(board, "XIAO ESP32-C6", 34.0, 12.0, 1.0)
-        text(board, "USB", 34.0, 2.2, 0.9)
-        text(board, "ANT", 34.0, 21.0, 0.9)
+        text(board, "XIAO ESP32-C6", D.XIAO_X, 12.75, 0.8)
+        text(board, "USB", D.XIAO_X, 2.2, 0.9)
+        text(board, "ANT", D.XIAO_X, 21.0, 0.9)
         # XIAO outline, for orientation when plugging it in
         line_board(board, D.XIAO_X - 8.6, 1.0, D.XIAO_X + 8.6, 1.0)
     else:
-        text(board, "ESP32-C6", 34.0, 12.4, 1.0)
         text(board, "RESET", 25.4, 22.8, 0.8, just="R")
         text(board, "BOOT", 41.1, 21.6, 0.8, just="L")
         text(board, "ANTENNA", 34.0, 1.3, 0.9)

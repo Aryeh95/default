@@ -101,8 +101,8 @@ PARTS = {
            {"1": "GND", "2": "+3V3", "3": "SDA", "4": "SCL"}, "", False, "custom:Header_I2C"),
     "J5": (HDR4, "UART", (48.5, 29.0, 0),
            {"1": "GND", "2": "+5V", "3": "UART_RX", "4": "UART_TX"}, "", False, "custom:Header_UART"),
-    "R14": (R0603, "4.7k", (45.4, 20.6, 90), {"1": "+3V3", "2": "SDA"}, "C23162", True, "Device:R"),
-    "R15": (R0603, "4.7k", (45.4, 23.6, 90), {"1": "+3V3", "2": "SCL"}, "C23162", True, "Device:R"),
+    "R14": (R0603, "4.7k", (42.8, 23.6, 0), {"1": "+3V3", "2": "SDA"}, "C23162", True, "Device:R"),
+    "R15": (R0603, "4.7k", (42.8, 25.4, 0), {"1": "+3V3", "2": "SCL"}, "C23162", True, "Device:R"),
 }
 
 # XIAO pin -> net (pins 1-7 down the left row, 8-14 up the right row)

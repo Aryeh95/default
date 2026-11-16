@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "crbox")(type "KiCad")(uri "${KIPRJMOD}/crbox.pretty")(options "")(descr "CR box fan controller footprints"))
+)

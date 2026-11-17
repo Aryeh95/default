@@ -105,7 +105,7 @@ def main():
         w = csv.writer(f)
         w.writerow(["Designator", "Qty per board", "Part", "Footprint", "LCSC Part #"])
         for ref, (fpid, value, _pos, _nets, lcsc, smt, _sym) in D.PARTS.items():
-            if not smt:
+            if not smt and not ref.startswith("TP"):
                 w.writerow([ref, 1, value, fpid[1], lcsc])
         if D.VARIANT == "xiao":
             w.writerow(["(XIAO)", 1, "Seeed XIAO ESP32-C6, bare (no headers fitted)", "plugs into J6/J7", ""])

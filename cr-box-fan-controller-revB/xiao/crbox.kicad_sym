@@ -283,6 +283,22 @@
 		)
 		(embedded_fonts no)
 	)
+	(symbol "TestPoint"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "U" (at 0 4.44 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "TestPoint" (at 0 -4.44 0) (effects (font (size 1.27 1.27))))
+		(property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+		(symbol "TestPoint_0_1"
+			(rectangle (start -10.16 2.54) (end 10.16 -2.54) (stroke (width 0.254) (type default)) (fill (type background)))
+		)
+		(symbol "TestPoint_1_1"
+			(pin passive line (at -12.70 0.00 0) (length 2.54) (name "TP" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+		)
+		(embedded_fonts no)
+	)
 	(symbol "USBLC6"
 		(exclude_from_sim no)
 		(in_bom yes)

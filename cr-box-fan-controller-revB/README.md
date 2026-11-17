@@ -5,7 +5,7 @@ everything else on the board surface-mount so JLCPCB can assemble it with Econom
 is 52 × 46 mm, 2-layer, with the same mounting holes and connectors as rev A.
 
 **Status: designed and rule-checked, not built.** The board passes KiCad DRC with 0 violations and
-0 unconnected items, and the schematic, PCB and `design.py` netlists match (33 nets / 139 pins).
+0 unconnected items, and the schematic, PCB and `design.py` netlists match (33 nets / 140 pins).
 
 A second version with an ESP32-C6-MINI-1 module soldered to the board was designed and then set
 aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.py` still supports it
@@ -16,11 +16,32 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
 - **5 V rail:** a second TPS54302 buck (100 k / 13 k feedback, 5.18 V) replaces the K7805
   through-hole module. Its EN pin is left open, so it is always on.
 - **12 V inductor:** Eaton EXLA1V0505-150-R (15 µH, 4 A continuous, 4.6 A saturation) on its
-  recommended land pattern. The 12 V rail is now good for about 7 fans (use a 45 W charger above 5).
+  recommended land pattern. The inductor would allow about 7 fans, but the TPS54302 then dissipates
+  roughly 0.6–0.7 W in a SOT-23-6, so **treat 5 fans as the limit** until a built board has been
+  checked for temperature at full load.
+- **5 V inductor:** FXL0518-100-M (10 µH, 2.5 A continuous, 3 A saturation) instead of a 1.95 A part,
+  so a short on the 5 V header no longer saturates it before the converter's current limit trips.
 - **FAN2 tach** is read on its own pin (GPIO20) with its own 10 k pull-up and 10 k series resistor.
   FAN1's series resistor is also 10 k now, which protects the GPIO from fans that pull tach up to 12 V.
 - **USB-C socket:** 16-pin TYPE-C-31-M-12 (its data pins are unused).
 - **PD_PG pull-up** removed; the firmware uses the ESP32's internal pull-up.
+- **Fan-header peg holes** are 1.3 mm (Molex recommends 1.25 mm; the KiCad library has 1.1 mm) so
+  machine-inserted headers seat flat.
+- **VBUS test pad (TP1)** next to the 12 V converter, for measuring the charger voltage.
+- **Wider supply track** (0.5 mm minimum) to the 5 V converter, no longer passing through a resistor pad.
+- **Ground plane:** signal tracks on the bottom layer cut from about 260 mm to 150 mm. Estimated ground
+  resistance from the USB-C socket and the 12 V output capacitors to the 12 V converter is now
+  0.5–0.6 mΩ (a solid plane would be about 0.4 mΩ).
+
+### Things to check on the first board
+
+- **CH224A VBUS pin (R16):** the datasheet's reference circuit ties it straight to VBUS (as here,
+  through R16 = 0 Ω), while its pin table says the pin tolerates 3.8 V. If PD negotiation misbehaves
+  or U1 runs hot, this is the first thing to look at.
+- **12 V converter temperature** with all fans at 100 %.
+- **Wi-Fi signal** with the XIAO in its sockets, compared with a bare XIAO (the 5 V converter is
+  about 6 mm from the antenna end, 7.5 mm below it).
+- Pull the XIAO **straight up** out of the SMD sockets; they're held only by their solder pads.
 
 ## Ordering
 
@@ -34,8 +55,8 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
    JLCPCB parts library first. The Abracon ASPI-5050LR-150M-T (C3224630, minimum 11) has the same
    size and pads and can be used instead.
 4. In the placement preview, check the orientation of U1, U4, U5, Q3, D1, J1, J6, J7 and the fan
-   headers (locking ramp along the bottom board edge). L1's placement has not been seen in JLCPCB's
-   viewer yet.
+   headers (locking ramp along the bottom board edge). L1 and the new L2 haven't been seen in
+   JLCPCB's viewer yet; both are two-pad parts, so only their position matters.
 
 ## XIAO notes
 

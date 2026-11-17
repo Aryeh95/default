@@ -373,6 +373,8 @@ def manual(r):
     r.add_track("CC_B", B, [(10.4, 15.75), (11.7, 14.45), (11.7, 13.6)], 0.2, g)
     r.add_via("CC_B", 11.7, 13.6, 0.6, 0.3, g)
     r.add_track("CC_B", T, [(11.7, 13.6), (12.0, 13.0), (12.0, 12.24)], 0.2, g)
+    # PWM transistor base resistor R7 -> Q3 base
+    r.add_track("Q3_B", T, [(38.8, 35.5), (38.8, 36.5), (37.75, 37.55), (37.06, 37.55)], 0.25)
     # ground pin of the PWM transistor sits in a pour island too small for a via
     g = r.add_track("GND", T, [(37.06, 39.45), (35.5, 39.45)], 0.4)
     r.add_via("GND", 35.5, 39.45, 0.8, 0.4, g)
@@ -407,7 +409,7 @@ def manual(r):
     r.add_track("+12V", T, [(21.93, 37.0), (15.5, 37.0), (14.54, 37.96), (14.54, 41.0)], 1.0, g)
     r.add_track("+12V", T, [(21.93, 37.0), (26.6, 37.0), (27.54, 37.94), (27.54, 41.0)], 1.0, g)
     # --- 5 V buck (mirror of the 12 V layout) ---------------------------------
-    g = r.add_track("SW5", T, [(32.64, 29.0), (37.5, 29.0)], 0.6)
+    g = r.add_track("SW5", T, [(32.64, 29.0), (37.35, 29.0)], 0.6)
     r.add_track("SW5", T, [(32.64, 29.0), (31.5, 29.0), (31.5, 30.8), (32.1, 31.4)], 0.25, g)
     r.add_track("BOOT5", T, [(30.36, 29.95), (30.36, 31.0), (30.72, 31.6)], 0.25)
     r.add_track("FB5", T, [(28.6, 25.4), (28.6, 29.0)], 0.25)
@@ -422,9 +424,9 @@ def manual(r):
     # feedback divider top: bring +5V over on the bottom layer
     g = r.add_track("+5V", T, [(27.0, 25.4), (27.0, 27.2)], 0.3)
     r.add_via("+5V", 27.0, 26.3, 0.7, 0.3, g)
-    r.add_track("+5V", B, [(27.0, 26.3), (27.0, 33.0), (40.2, 33.0), (41.0, 32.2)], 0.4, g)
-    r.add_via("+5V", 41.0, 32.2, 0.7, 0.3, g)
-    r.add_track("+5V", T, [(41.0, 32.2), (42.13, 31.0)], 0.4, g)
+    r.add_track("+5V", B, [(27.0, 26.3), (27.0, 33.9), (41.3, 33.9), (42.0, 33.2)], 0.4, g)
+    r.add_via("+5V", 42.0, 33.2, 0.7, 0.3, g)
+    r.add_track("+5V", T, [(42.0, 33.2), (40.57, 33.2)], 0.4, g)
     # USB-C shield pin next to the ground contacts
     r.add_track("GND", T, [(6.38, 18.32), (7.29, 17.25)], 0.4)
     # small ground pads that the pour can't reach on its own
@@ -433,13 +435,15 @@ def manual(r):
     # stitching vias for top-layer pour islands at the headers
     r.add_via("GND", 21.0, 39.2, 0.8, 0.4)
     r.add_via("GND", 46.8, 15.6, 0.8, 0.4)
-    g = r.add_track("+5V", T, [(40.5, 27.5), (42.13, 27.5)], 0.8)
-    r.add_track("+5V", T, [(40.5, 30.5), (42.13, 30.5)], 0.8, g)
-    g = r.add_track("GND", T, [(45.07, 27.5), (45.07, 25.9)], 0.6)
-    r.add_via("GND", 45.07, 25.9, 0.8, 0.4, g)
-    # (kept clear of the "5V" label next to J5)
-    g = r.add_track("GND", T, [(45.07, 30.5), (45.07, 31.5), (44.0, 32.6)], 0.6)
-    r.add_via("GND", 44.0, 32.6, 0.8, 0.4, g)
+    # 5 V output: L2 -> C19 (right, vertical) and C20 (below L2)
+    g = r.add_track("+5V", T, [(41.45, 29.0), (42.6, 30.1), (44.2, 30.1)], 0.8)
+    r.add_track("+5V", T, [(41.45, 29.0), (41.45, 31.5), (40.57, 32.6), (40.57, 33.2)], 0.8, g)
+    g = r.add_track("GND", T, [(44.2, 27.125), (45.6, 26.0)], 0.6)
+    r.add_via("GND", 45.6, 26.0, 0.8, 0.4, g)
+    g = r.add_track("GND", T, [(37.63, 33.2), (37.63, 31.6)], 0.6)
+    r.add_via("GND", 37.63, 31.6, 0.8, 0.4, g)
+    # direct ground return from the output caps to the converter's input-cap ground
+    r.add_track("GND", T, [(37.63, 31.6), (34.9, 31.9)], 0.6, g)
 
 
 def _inside(px, py, poly):
@@ -537,14 +541,16 @@ def plan(board):
         ys = [p[1] for p in pos.get(n, [(0, 0)])]
         return max(xs) - min(xs) + max(ys) - min(ys)
 
-    first = [("VBUS", 0.3, {}), ("+12V", 0.25, {}), ("USB_DP", 0.25, {}), ("USB_DM", 0.25, {}),
+    first = [("VBUS", 0.5, {"bottom_cost": 3.0}), ("+12V", 0.25, {}), ("USB_DP", 0.25, {}), ("USB_DM", 0.25, {}),
              ("CC_A", 0.2, {}), ("CC_B", 0.2, {}), ("VHV", 0.4, {}),
              ("+5V", 0.4, {"via": (0.8, 0.4)}), ("XIAO_5V", 0.5, {"via": (0.8, 0.4)}),
-             ("+3V3", 0.4, {"via": (0.8, 0.4)}), ("VSENSE", 0.25, {"bottom_cost": 1.0}),
-             ("PD_PG", 0.25, {"bottom_cost": 1.0}), ("FAN_TACH", 0.25, {"bottom_cost": 1.0})]
+             ("+3V3", 0.4, {"via": (0.8, 0.4)}), ("VSENSE", 0.25, {"bottom_cost": 1.8}),
+             ("PD_PG", 0.25, {"bottom_cost": 1.8}), ("FAN_TACH", 0.25, {"bottom_cost": 1.8}),
+             ("PWM_MCU", 0.25, {"bottom_cost": 1.5})]
     out = [x for x in first if x[0] in nets]
     done = {x[0] for x in out} | {"GND"}
-    out += [(n, 0.25, {"bottom_cost": 1.15}) for n in sorted(nets, key=hpwl) if n not in done]
+    # signals pay extra for the bottom layer so the ground plane stays as whole as possible
+    out += [(n, 0.25, {"bottom_cost": 1.8}) for n in sorted(nets, key=hpwl) if n not in done]
     out.append(("GND", 0.4, {"via": (0.8, 0.4), "bottom_cost": 1.0}))
     return out
 

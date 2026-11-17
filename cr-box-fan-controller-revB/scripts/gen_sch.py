@@ -47,6 +47,7 @@ CUSTOM = {
     "ESP32-C6-MINI-1": (_esp_left, _esp_right),
     "AP2112K": ([("1", "VIN"), ("3", "EN"), ("2", "GND")], [("5", "VOUT"), ("4", "NC")]),
     "Button": ([("1", "1")], [("2", "2")]),
+    "TestPoint": ([("1", "TP")], []),
     "USBLC6": ([("1", "I/O1"), ("3", "I/O2"), ("2", "GND")], [("6", "I/O1"), ("4", "I/O2"), ("5", "VBUS")]),
 }
 HALF_W = 12.7
@@ -68,7 +69,7 @@ else:
 SECTIONS = [
     ("USB-C input: CH224A requests 15 V (56k on CFG1). CC lines are interchangeable.", C1X, 30,
      [["J1", "U1"], ["R1", "R16", "C1", "R2"]]),
-    ("VBUS voltage sense (to ADC)", C1X, 150, [["R11", "R12", "C7"]]),
+    ("VBUS voltage sense (to ADC) and test pad", C1X, 150, [["R11", "R12", "C7", "TP1"]]),
     ("12 V fan rail: TPS54302 buck, EN pin = fan power on/off", C2X, 30,
      [["U4", "L1"], ["C9", "C10", "C8", "C11", "C12", "C13"], ["R3", "C6", "R4", "R5", "R6"]]),
     ("5 V rail: TPS54302 buck, EN left open (always on)", C2X, 190,

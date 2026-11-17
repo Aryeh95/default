@@ -200,6 +200,13 @@ def place():
             for g in list(fp.GraphicalItems()):
                 if g.GetLayer() == pcbnew.F_SilkS:
                     fp.Remove(g)
+        if fpid[1].startswith("FanPinHeader"):
+            # locating-peg hole: 1.3 mm (Molex recommends 1.25 mm; the library has 1.1 mm),
+            # so machine-inserted headers seat flat
+            for pad in fp.Pads():
+                if pad.GetNumber() == "":
+                    pad.SetDrillSize(VECTOR2I(FromMM(1.3), FromMM(1.3)))
+                    pad.SetSize(VECTOR2I(FromMM(1.3), FromMM(1.3)))
         if ref == "U3":
             # the module outline runs along the board edge at the antenna end
             for g in list(fp.GraphicalItems()):
@@ -294,7 +301,8 @@ def finish_silk(board):
         # "5V" sits 0.7 mm low so it clears C20's pad
         text(board, s, 46.9, 29.0 + 2.54 * i + (0.7 if s == "5V" else 0), 0.8, just="R")
     text(board, "12V BUCK", 12.0, 33.0, 0.9)
-    text(board, "5V BUCK", 36.0, 32.6, 0.9)
+    text(board, "5V BUCK", 34.3, 32.6, 0.8)
+    text(board, "VBUS", 19.0, 32.6, 0.8, just="L")
     if D.VARIANT == "xiao":
         text(board, "XIAO ESP32-C6", D.XIAO_X, 12.75, 0.8)
         text(board, "USB", D.XIAO_X, 2.2, 0.9)

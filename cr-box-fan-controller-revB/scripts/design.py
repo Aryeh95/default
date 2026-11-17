@@ -8,6 +8,8 @@ Changes from Rev A (both variants)
   - 12 V inductor: Eaton EXLA1V0505-150-R (4 A) on its recommended land pattern
   - FAN2 tach read on its own pin (GPIO20) with its own pull-up and series resistor
   - tach series resistors 10 k (protects the GPIO from fans that pull tach up to 12 V)
+  - 5 V inductor rated 3 A saturation (FXL0518), VBUS test pad TP1
+  - fan-header peg holes 1.3 mm (Molex recommends 1.25 mm) for machine insertion
   - 16-pin USB-C socket (data lines used by the module variant)
 """
 import os
@@ -74,13 +76,16 @@ PARTS = {
     "C17": (C1206, "10uF 50V", (34.9, 29.0, 90), {"1": "GND", "2": "VBUS"}, "C13585", True, "Device:C"),
     "C23": (C0603, "100nF 50V", (32.64, 25.8, 90), {"1": "VBUS", "2": "GND"}, "C14663", True, "Device:C"),
     "C18": (C0603, "100nF 50V", (31.5, 31.6, 0), {"1": "BOOT5", "2": "SW5"}, "C14663", True, "Device:C"),
-    "L2": (("Inductor_SMD", "L_Changjiang_FNR4030S"), "10uH 1.5A YNR4030-100M", (39.0, 29.0, 0),
-           {"1": "SW5", "2": "+5V"}, "C340393", True, "Device:L"),
-    "C19": (C1206, "22uF 25V", (43.6, 27.5, 0), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
-    "C20": (C1206, "22uF 25V", (43.6, 30.5, 0), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
+    "L2": (("Inductor_SMD", "L_Changjiang_FXL0518"), "10uH 3A FXL0518-100-M", (39.4, 29.0, 0),
+           {"1": "SW5", "2": "+5V"}, "C475910", True, "Device:L"),
+    "C19": (C1206, "22uF 25V", (44.2, 28.6, 90), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
+    "C20": (C1206, "22uF 25V", (39.1, 33.2, 180), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
     "R19": (R0603, "100k", (27.8, 27.2, 0), {"1": "+5V", "2": "FB5"}, "C25803", True, "Device:R"),
     "C21": (C0603, "100pF", (27.8, 25.4, 0), {"1": "+5V", "2": "FB5"}, "C14858", True, "Device:C"),
     "R20": (R0603, "13k", (27.8, 29.0, 0), {"1": "GND", "2": "FB5"}, "C22797", True, "Device:R"),
+    # --- test pad for the charger voltage ---------------------------------
+    "TP1": (("TestPoint", "TestPoint_Pad_D1.5mm"), "VBUS", (18.0, 32.6, 0), {"1": "VBUS"}, "", False,
+            "custom:TestPoint"),
     # --- fan PWM (open collector) and tach inputs --------------------------
     "Q3": (SOT23, "MMBT3904", (38.0, 38.5, 0), {"1": "Q3_B", "2": "GND", "3": "FAN_PWM"}, "C20526", True,
            "custom:NPN_BEC"),

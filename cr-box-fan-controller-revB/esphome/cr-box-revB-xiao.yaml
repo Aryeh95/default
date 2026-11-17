@@ -24,6 +24,12 @@ esp32:
     type: esp-idf
 
 logger:
+
+# Filter Hours is saved to flash; writing it every 30 min instead of every minute
+# spares the flash. A power cut loses at most 30 min of the count.
+preferences:
+  flash_write_interval: 30min
+
 api:
 ota:
   - platform: esphome
@@ -49,9 +55,23 @@ switch:
     restore_mode: ALWAYS_OFF
     internal: true
 
+  # Turn on if a fan is plugged into FAN2. Leave off when all fans are daisy-chained
+  # from FAN1, otherwise "Fan 2 Problem" would always report a stopped fan.
+  - platform: template
+    id: fan2_fitted
+    name: "Fan 2 Fitted"
+    icon: "mdi:fan-plus"
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+
 globals:
   - id: duty                # PWM level currently applied to the fans, 0..1
     type: float
+    initial_value: '0'
+  - id: filter_minutes      # minutes the fans have run on the current filter
+    type: float
+    restore_value: true
     initial_value: '0'
 
 fan:
@@ -104,6 +124,7 @@ script:
 
 sensor:
   - platform: pulse_counter
+    id: fan1_rpm
     name: "Fan 1 RPM"
     pin: GPIO19
     unit_of_measurement: "RPM"
@@ -113,6 +134,7 @@ sensor:
       - multiply: 0.5       # 2 pulses per revolution
 
   - platform: pulse_counter
+    id: fan2_rpm
     name: "Fan 2 RPM"
     pin: GPIO20
     unit_of_measurement: "RPM"
@@ -133,6 +155,15 @@ sensor:
       - sliding_window_moving_average:
           window_size: 3
           send_every: 1
+
+  - platform: template
+    name: "Filter Hours"
+    unit_of_measurement: "h"
+    icon: "mdi:air-filter"
+    accuracy_decimals: 1
+    state_class: total_increasing   # long-term statistics in Home Assistant
+    update_interval: 60s
+    lambda: 'return id(filter_minutes) / 60.0f;'
 
 binary_sensor:
   - platform: gpio
@@ -156,6 +187,50 @@ binary_sensor:
       - delayed_off: 2s     # ignore a brief dip when the fans start
     on_state:
       - script.execute: apply_fan
+
+  # What the hardware is actually doing. "Purifier Fan" stays on as the user's request
+  # (so the fans resume when the charger recovers); this shows whether the 12 V rail is on.
+  - platform: template
+    name: "Fans Running"
+    device_class: running
+    lambda: 'return id(fan_power).state;'
+
+  # A fan that has stopped or come unplugged: rail on, asked for more than 30 %,
+  # but its tach reads under 200 RPM for 30 s. FAN2 is only checked when
+  # "Fan 2 Fitted" is on.
+  - platform: template
+    name: "Fan 1 Problem"
+    device_class: problem
+    lambda: |-
+      return id(fan_power).state && id(duty) > 0.3f &&
+             id(fan1_rpm).has_state() && id(fan1_rpm).state < 200;
+    filters:
+      - delayed_on: 30s
+
+  - platform: template
+    name: "Fan 2 Problem"
+    device_class: problem
+    lambda: |-
+      return id(fan2_fitted).state && id(fan_power).state && id(duty) > 0.3f &&
+             id(fan2_rpm).has_state() && id(fan2_rpm).state < 200;
+    filters:
+      - delayed_on: 30s
+
+# Filter run time: counts a minute whenever the 12 V rail is on. The count is saved
+# to flash, so it survives reboots.
+interval:
+  - interval: 60s
+    then:
+      - lambda: |-
+          if (id(fan_power).state) id(filter_minutes) += 1.0f;
+
+button:
+  - platform: template
+    name: "Reset Filter Hours"
+    icon: "mdi:restore"
+    entity_category: config
+    on_press:
+      - lambda: 'id(filter_minutes) = 0.0f;'
 
 # Optional sensors on the headers. Both headers use 3.3 V logic. The UART header
 # supplies 5 V power, which suits sensors like the PMS5003 or SEN55 (5 V power,

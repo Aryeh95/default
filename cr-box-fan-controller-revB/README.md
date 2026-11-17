@@ -86,6 +86,28 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
   may not seat.
 - The sockets are 5 mm tall; the case model assumes that.
 
+## Firmware
+
+There are three builds of the same firmware. Pick one and flash it over the XIAO's own USB
+port the first time.
+
+| File | Network | Home Assistant sees | Updates |
+|---|---|---|---|
+| `cr-box-revB-wifi.yaml` | Wi-Fi, with a fallback hotspot | Fan entity with speed, all sensors | Over Wi-Fi |
+| `cr-box-revB-thread.yaml` | Thread (needs a border router) | Same as Wi-Fi | Over Thread |
+| `cr-box-revB-zigbee.yaml` | Zigbee router (ZHA or Zigbee2MQTT) | "Fan Power" switch and "Fan Speed" number, the sensors, no "Charger Protocol" | USB only |
+
+- ESPHome can't run Wi-Fi and Thread at the same time, or Zigbee and Thread, so each build
+  has one network. To change network, flash a different build: Wi-Fi to Thread works over the
+  air; going to Zigbee, or back from Zigbee, needs the USB cable.
+- **Thread** needs your network's dataset in `secrets.yaml` as `thread_tlv` (Home Assistant:
+  Settings > Devices & services > Thread > Configure > the (i) on your network > Active dataset
+  TLVs).
+- **Zigbee** support in ESPHome is new and only exposes switches, numbers, sensors and binary
+  sensors, so the fan is a switch plus a 0–100 % number and "Reset Filter Hours" is a switch
+  that turns itself off. Zigbee2MQTT may show the device as generic endpoints.
+- All three were compiled with ESPHome 2026.10.2 but none has run on hardware yet.
+
 ## Files
 
 | Path | What it is |
@@ -93,7 +115,8 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
 | `xiao/*.kicad_pro`, `.kicad_sch`, `.kicad_pcb` | KiCad 9 project |
 | `xiao/docs/` | Schematic PDF, 3D render, assembly drawing (with reference designators), case preview |
 | `xiao/fab/` | Gerbers, JLCPCB BOM and CPL files, hand-solder list |
-| `esphome/cr-box-revB-xiao.yaml` | Firmware |
+| `esphome/cr-box-revB-wifi.yaml`, `-thread.yaml`, `-zigbee.yaml` | Firmware, one per network (see [Firmware](#firmware)) |
+| `esphome/common/cr-box-revB-core.yaml` | Fan control and sensors shared by all three |
 | `case/` | OpenSCAD case model and STL files |
 | `scripts/` | Generators |
 

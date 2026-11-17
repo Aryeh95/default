@@ -5,7 +5,7 @@
 
 Changes from Rev A (both variants)
   - 5 V rail: second TPS54302 buck (surface mount) instead of the K7805 SIP module
-  - 12 V inductor: Eaton EXLA1V0505-150-R (4 A) on its recommended land pattern
+  - 12 V inductor: TMPA0605S-150MN-D (15 uH, 4 A, in stock at JLCPCB) on its EasyEDA land pattern
   - FAN2 tach read on its own pin (GPIO20) with its own pull-up and series resistor
   - tach series resistors 10 k (protects the GPIO from fans that pull tach up to 12 V)
   - 5 V inductor rated 3 A saturation (FXL0518), VBUS test pad TP1
@@ -59,30 +59,30 @@ PARTS = {
     "C9": (C1206, "10uF 50V", (11.9, 27.0, 90), {"1": "GND", "2": "VBUS"}, "C13585", True, "Device:C"),
     "C10": (C0603, "100nF 50V", (10.4, 23.9, 0), {"1": "VBUS", "2": "GND"}, "C14663", True, "Device:C"),
     "C8": (C0603, "100nF 50V", (8.5, 30.1, 0), {"1": "BOOT", "2": "SW"}, "C14663", True, "Device:C"),
-    "L1": (("custom", "L_EXLA1V0505"), "15uH 4A EXLA1V0505-150-R", (17.5, 27.0, 0),
-           {"1": "SW", "2": "+12V"}, "C5737644", True, "Device:L"),
-    "C11": (C1206, "22uF 25V", (23.4, 24.3, 0), {"1": "+12V", "2": "GND"}, "C12891", True, "Device:C"),
-    "C12": (C1206, "22uF 25V", (23.4, 27.0, 0), {"1": "+12V", "2": "GND"}, "C12891", True, "Device:C"),
-    "C13": (C1206, "22uF 25V", (23.4, 29.7, 0), {"1": "+12V", "2": "GND"}, "C12891", True, "Device:C"),
+    "L1": (("custom", "L_TMPA0605S"), "15uH 4A TMPA0605S-150MN-D", (17.8, 27.0, 0),
+           {"1": "SW", "2": "+12V"}, "C305194", True, "Device:L"),
+    "C11": (C1206, "22uF 25V", (24.9, 24.3, 0), {"1": "+12V", "2": "GND"}, "C12891", True, "Device:C"),
+    "C12": (C1206, "22uF 25V", (24.9, 27.0, 0), {"1": "+12V", "2": "GND"}, "C12891", True, "Device:C"),
+    "C13": (C1206, "22uF 25V", (24.9, 29.7, 0), {"1": "+12V", "2": "GND"}, "C12891", True, "Device:C"),
     "R3": (R0603, "100k", (4.6, 24.3, 0), {"1": "+12V", "2": "FB"}, "C25803", True, "Device:R"),
     "C6": (C0603, "100pF", (4.6, 22.5, 0), {"1": "+12V", "2": "FB"}, "C14858", True, "Device:C"),
     "R4": (R0603, "5.1k", (4.6, 26.05, 0), {"1": "GND", "2": "FB"}, "C23186", True, "Device:R"),
     "R6": (R0603, "100k", (4.6, 27.9, 0), {"1": "GND", "2": "BUCK_EN"}, "C25803", True, "Device:R"),
     "R5": (R0603, "10k", (4.6, 29.7, 0), {"1": "FAN_EN", "2": "BUCK_EN"}, "C25804", True, "Device:R"),
     # --- 5 V rail: TPS54302 buck (EN left open = always on) ----------------
-    "U5": (TSOT6, "TPS54302", (31.5, 29.0, 180),
+    "U5": (TSOT6, "TPS54302", (32.5, 29.0, 180),
            {"1": "GND", "2": "SW5", "3": "VBUS", "4": "FB5", "6": "BOOT5"},
            "C311983", True, "custom:TPS54302"),
-    "C17": (C1206, "10uF 50V", (34.9, 29.0, 90), {"1": "GND", "2": "VBUS"}, "C13585", True, "Device:C"),
-    "C23": (C0603, "100nF 50V", (32.64, 25.8, 90), {"1": "VBUS", "2": "GND"}, "C14663", True, "Device:C"),
-    "C18": (C0603, "100nF 50V", (31.5, 31.6, 0), {"1": "BOOT5", "2": "SW5"}, "C14663", True, "Device:C"),
-    "L2": (("Inductor_SMD", "L_Changjiang_FXL0518"), "10uH 3A FXL0518-100-M", (39.4, 29.0, 0),
+    "C17": (C1206, "10uF 50V", (35.9, 29.0, 90), {"1": "GND", "2": "VBUS"}, "C13585", True, "Device:C"),
+    "C23": (C0603, "100nF 50V", (33.64, 25.8, 90), {"1": "VBUS", "2": "GND"}, "C14663", True, "Device:C"),
+    "C18": (C0603, "100nF 50V", (32.5, 31.6, 0), {"1": "BOOT5", "2": "SW5"}, "C14663", True, "Device:C"),
+    "L2": (("Inductor_SMD", "L_Changjiang_FXL0518"), "10uH 3A FXL0518-100-M", (40.4, 29.0, 0),
            {"1": "SW5", "2": "+5V"}, "C475910", True, "Device:L"),
-    "C19": (C1206, "22uF 25V", (44.2, 28.6, 90), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
-    "C20": (C1206, "22uF 25V", (39.1, 33.2, 180), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
-    "R19": (R0603, "100k", (27.8, 27.2, 0), {"1": "+5V", "2": "FB5"}, "C25803", True, "Device:R"),
-    "C21": (C0603, "100pF", (27.8, 25.4, 0), {"1": "+5V", "2": "FB5"}, "C14858", True, "Device:C"),
-    "R20": (R0603, "13k", (27.8, 29.0, 0), {"1": "GND", "2": "FB5"}, "C22797", True, "Device:R"),
+    "C19": (C1206, "22uF 25V", (44.8, 28.6, 90), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
+    "C20": (C1206, "22uF 25V", (40.1, 33.2, 180), {"1": "+5V", "2": "GND"}, "C12891", True, "Device:C"),
+    "R19": (R0603, "100k", (28.8, 27.2, 0), {"1": "+5V", "2": "FB5"}, "C25803", True, "Device:R"),
+    "C21": (C0603, "100pF", (28.8, 25.4, 0), {"1": "+5V", "2": "FB5"}, "C14858", True, "Device:C"),
+    "R20": (R0603, "13k", (28.8, 29.0, 0), {"1": "GND", "2": "FB5"}, "C22797", True, "Device:R"),
     # --- test pad for the charger voltage ---------------------------------
     "TP1": (("TestPoint", "TestPoint_Pad_D1.5mm"), "VBUS", (18.0, 32.6, 0), {"1": "VBUS"}, "", False,
             "custom:TestPoint"),

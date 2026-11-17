@@ -27,7 +27,7 @@ FLOOR = 2.0;
 GAP = 0.5;                    // board edge to inner wall
 STANDOFF_H = 5.0;             // room under the board for through-hole solder joints
 // board top to underside of the lid: the module board's tallest parts are the
-// 4.8 mm inductor and the fan headers (which poke up into the lid openings)
+// 5 mm inductor and the fan headers (which poke up into the lid openings)
 CLEAR = VARIANT == "module" ? 8.0 : 12.0;
 LID_T = 2.0;
 LIP_H = 2.5;                  // locating lip on the lid
@@ -221,8 +221,8 @@ module board_parts() {
         blk(27.4, 0.0, 40.6, 16.6, 2.4, "silver");                         // ESP32-C6-MINI-1
         for (x = [29.5, 37.0]) blk(x - 2.6, 18.7, x + 2.6, 23.9, 1.6, "black");  // buttons
     }
-    blk(14.65, 24.0, 20.35, 30.0, 4.8, "dimgray");    // inductor L1 (Eaton EXLA1V0505)
-    blk(37.0, 27.0, 41.0, 31.0, 3.0, "dimgray");      // inductor L2
+    blk(14.15, 23.7, 21.45, 30.3, 5.0, "dimgray");    // inductor L1 (TMPA0605S, 7.3 x 6.6 mm)
+    blk(38.0, 27.0, 42.0, 31.0, 3.0, "dimgray");      // inductor L2
     blk(46.7, 15.2, 50.3, 38.4, 8.5, "black");        // sensor pin headers
 }
 

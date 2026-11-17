@@ -15,8 +15,9 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
 
 - **5 V rail:** a second TPS54302 buck (100 k / 13 k feedback, 5.18 V) replaces the K7805
   through-hole module. Its EN pin is left open, so it is always on.
-- **12 V inductor:** Eaton EXLA1V0505-150-R (15 µH, 4 A continuous, 4.6 A saturation) on its
-  recommended land pattern. The inductor would allow about 7 fans, but the TPS54302 then dissipates
+- **12 V inductor:** TMPA0605S-150MN-D (LCSC C305194; 15 µH, 4 A rated and saturation, 73 mΩ,
+  7.3 × 6.6 mm) on JLCPCB's land pattern for it. It is in stock at JLCPCB, so no pre-order is needed.
+  The inductor would allow about 7 fans, but the TPS54302 then dissipates
   roughly 0.6–0.7 W in a SOT-23-6, so **treat 5 fans as the limit** until a built board has been
   checked for temperature at full load.
 - **5 V inductor:** FXL0518-100-M (10 µH, 2.5 A continuous, 3 A saturation) instead of a 1.95 A part,
@@ -31,7 +32,7 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
 - **Wider supply track** (0.5 mm minimum) to the 5 V converter, no longer passing through a resistor pad.
 - **Ground plane:** signal tracks on the bottom layer cut from about 260 mm to 150 mm. Estimated ground
   resistance from the USB-C socket and the 12 V output capacitors to the 12 V converter is now
-  0.5–0.6 mΩ (a solid plane would be about 0.4 mΩ).
+  0.5–0.65 mΩ (a solid plane would be about 0.4 mΩ).
 
 ### Things to check on the first board
 
@@ -51,12 +52,9 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
    - `*-jlcpcb.csv`: surface-mount parts only; you solder the fan headers.
    - `*-fanhdr-C19795120.csv`: JLCPCB also fits the fan headers (Molex 470533000). This was quoted
      as Economic PCBA with a small handling fee per header.
-3. **L1 is a pre-order part** (Eaton EXLA1V0505-150-R, C5737644, minimum 47). Pre-order it into your
-   JLCPCB parts library first. The Abracon ASPI-5050LR-150M-T (C3224630, minimum 11) has the same
-   size and pads and can be used instead.
-4. In the placement preview, check the orientation of U1, U4, U5, Q3, D1, J1, J6, J7 and the fan
-   headers (locking ramp along the bottom board edge). L1 and the new L2 haven't been seen in
-   JLCPCB's viewer yet; both are two-pad parts, so only their position matters.
+3. In the placement preview, check the orientation of U1, U4, U5, Q3, D1, J1, J6, J7 and the fan
+   headers (locking ramp along the bottom board edge). L1 and L2 haven't been seen in JLCPCB's
+   viewer yet; both are two-pad parts, so only their position matters.
 
 ## XIAO notes
 

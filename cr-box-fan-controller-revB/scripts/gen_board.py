@@ -112,6 +112,19 @@ def custom_footprint(board, name):
         line(pcbnew.F_SilkS, -3.0, -3.15, 3.0, -3.15)
         line(pcbnew.F_SilkS, -3.0, 3.15, 3.0, 3.15)
         fp.SetAttributes(pcbnew.FP_SMD)
+    elif name == "L_TMPA0605S":
+        # TMPA0605S-150MN-D (LCSC C305194), land pattern from the EasyEDA library:
+        # two 2.42 x 3.42 mm pads at +-3.278 mm. Body 7.3 x 6.6 mm.
+        smd("1", -3.278, 0, 2.42, 3.42)
+        smd("2", 3.278, 0, 2.42, 3.42)
+        rect(pcbnew.F_Fab, 3.65, 3.3)
+        rect(pcbnew.F_CrtYd, 4.74, 3.6, 0.05)
+        line(pcbnew.F_SilkS, -3.75, -3.45, 3.75, -3.45)
+        line(pcbnew.F_SilkS, -3.75, 3.45, 3.75, 3.45)
+        for sx in (-1, 1):
+            line(pcbnew.F_SilkS, sx * 3.75, -3.45, sx * 3.75, -2.05)
+            line(pcbnew.F_SilkS, sx * 3.75, 2.05, sx * 3.75, 3.45)
+        fp.SetAttributes(pcbnew.FP_SMD)
     else:
         raise KeyError(name)
     fp.SetFPID(pcbnew.LIB_ID("crbox", name))
@@ -301,7 +314,7 @@ def finish_silk(board):
         # "5V" sits 0.7 mm low so it clears C20's pad
         text(board, s, 46.9, 29.0 + 2.54 * i + (0.7 if s == "5V" else 0), 0.8, just="R")
     text(board, "12V BUCK", 12.0, 33.0, 0.9)
-    text(board, "5V BUCK", 34.3, 32.6, 0.8)
+    text(board, "5V BUCK", 34.3, 33.3, 0.8)
     text(board, "VBUS", 19.0, 32.6, 0.8, just="L")
     if D.VARIANT == "xiao":
         text(board, "XIAO ESP32-C6", D.XIAO_X, 12.75, 0.8)

@@ -297,7 +297,7 @@ def add_gnd_zones(board):
 
 
 def finish_silk(board):
-    text(board, "CR BOX FAN CTRL", 35.2, 44.8, 0.9, just="L")
+    text(board, "PD FAN CTRL", 35.2, 44.8, 0.9, just="L")
     text(board, "rev B", 46.0, 39.6, 0.8)
     text(board, "USB PD", 0.9, 7.6, 0.9, just="L")
     text(board, "15V 30W+", 0.8, 20.4, 0.9, just="L")

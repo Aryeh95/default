@@ -133,7 +133,7 @@ module base() {
             translate([x, OUT_H / 2, -1]) cylinder(d = EAR_HOLE, h = EAR_T + 5);
         // label on the floor underside
         translate([OUT_W / 2, OUT_H / 2, -0.01]) mirror([1, 0, 0])
-            linear_extrude(0.6) text("CR BOX FAN CTRL", size = 4, halign = "center", valign = "center");
+            linear_extrude(0.6) text("PD FAN CTRL", size = 4, halign = "center", valign = "center");
     }
 }
 

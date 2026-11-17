@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "pdfan")(type "KiCad")(uri "${KIPRJMOD}/pdfan.kicad_sym")(options "")(descr "PD fan fan controller symbols"))
+)

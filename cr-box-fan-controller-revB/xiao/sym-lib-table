@@ -1,4 +1,0 @@
-(sym_lib_table
-  (version 7)
-  (lib (name "crbox")(type "KiCad")(uri "${KIPRJMOD}/crbox.kicad_sym")(options "")(descr "CR box fan controller symbols"))
-)

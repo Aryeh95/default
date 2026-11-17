@@ -205,7 +205,8 @@ module board_parts() {
     blk(XIAO_X + 6.35, 2.6, XIAO_X + 8.89, 20.4, SOCKET_H, "black");
     blk(14.15, 23.7, 21.45, 30.3, 5.0, "dimgray");    // inductor L1 (TMPA0605S, 7.3 x 6.6 mm)
     blk(38.0, 27.0, 42.0, 31.0, 3.0, "dimgray");      // inductor L2
-    blk(46.7, 15.2, 50.3, 38.4, 8.5, "black");        // sensor pin headers
+    blk(46.7, 15.2, 50.3, 26.4, 8.5, "black");        // I2C header J4 (1x4)
+    blk(46.7, 27.2, 50.3, 38.4, 8.5, "black");        // UART header J5 (1x4)
 }
 
 module xiao_model() {

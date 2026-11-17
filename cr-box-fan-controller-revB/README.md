@@ -66,8 +66,9 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
 
 ## Ordering
 
-1. Upload `xiao/fab/*-gerbers.zip`. 2 layers, 1.6 mm, **green**, lead-free HASL (other colours
-   force Standard PCBA).
+1. Upload `xiao/fab/*-gerbers.zip`. 2 layers, 1.6 mm, any solder-mask colour (green and blue were
+   both quoted with Economic PCBA), HASL with or without lead. Don't pick OSP: that finish forces
+   Standard PCBA.
 2. PCB Assembly, **Economic**, top side. Upload a BOM and the CPL with the same suffix:
    - `*-jlcpcb.csv`: surface-mount parts only; you solder the fan headers.
    - `*-fanhdr-C19795120.csv`: JLCPCB also fits the fan headers (Molex 470533000). This was quoted

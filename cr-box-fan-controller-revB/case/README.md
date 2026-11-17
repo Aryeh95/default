@@ -3,12 +3,12 @@
 A two-part printed case for the fan controller board: a base the board screws into, and a lid
 that clamps the board down. The fan plugs go in through openings in the lid.
 
-![Case, exploded](../docs/case-exploded.png)
+![Case, exploded](../xiao/docs/case-exploded.png)
 
 | File | What it is |
 |---|---|
-| `cr-box-case-base.stl` | Base, print as is |
-| `cr-box-case-lid.stl` | Lid, already flipped upside down for printing |
+| `cr-box-case-revB-xiao-base.stl` | Base, print as is |
+| `cr-box-case-revB-xiao-lid.stl` | Lid, already flipped upside down for printing |
 | `cr-box-case.scad` | OpenSCAD source; every dimension is a parameter at the top |
 
 ## Size
@@ -62,7 +62,7 @@ models, so check these on the real board before printing a final version:
 Change a parameter in `cr-box-case.scad`, then export again:
 
 ```sh
-openscad -D 'part="base"' -o cr-box-case-base.stl cr-box-case.scad
-openscad -D 'part="lid"'  -o cr-box-case-lid.stl  cr-box-case.scad
-openscad -D 'part="collide"' -o check.stl cr-box-case.scad   # empty result = nothing collides
+openscad -D 'VARIANT="xiao"' -D 'part="base"' -o cr-box-case-revB-xiao-base.stl cr-box-case.scad
+openscad -D 'VARIANT="xiao"' -D 'part="lid"'  -o cr-box-case-revB-xiao-lid.stl  cr-box-case.scad
+openscad -D 'VARIANT="xiao"' -D 'part="collide"' -o check.stl cr-box-case.scad   # empty result = nothing collides
 ```

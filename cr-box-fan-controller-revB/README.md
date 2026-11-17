@@ -1,10 +1,34 @@
-# CR Box fan controller, rev B
+# ESPHome fan controller for a Corsi-Rosenthal box
 
-Rev B keeps the Seeed XIAO ESP32-C6, now plugged into two surface-mount sockets, and makes
-everything else on the board surface-mount so JLCPCB can assemble it with Economic PCBA. The board
-is 52 × 46 mm, 2-layer, with the same mounting holes and connectors as rev A.
+A small board that runs 12 V PWM PC fans from a USB-C PD charger and puts them in Home Assistant
+through ESPHome on a Seeed XIAO ESP32-C6. It is sized for a Corsi-Rosenthal air purifier (140 mm
+fans such as the Arctic P14 PWM PST), but works for any 4-pin PWM fans.
 
-**Status: designed and rule-checked, not built.** The board passes KiCad DRC with 0 violations and
+![Board render](xiao/docs/board-3d.png)
+
+- Requests 15 V from any USB-C PD charger of 30 W or more and makes a regulated 12 V fan rail.
+- Switches the fan rail fully off, so "off" in Home Assistant stops fans that idle at 0 % PWM.
+- 25 kHz PWM, RPM from both fan headers, input voltage, charger protocol and available current.
+- I2C and UART headers for an air-quality sensor (3.3 V logic).
+- Wi-Fi, Thread or Zigbee firmware builds, a KiCad 9 project, JLCPCB order files and a
+  3D-printable case.
+
+The board is rev B: the XIAO plugs into two surface-mount sockets and everything else is
+surface-mount, so JLCPCB can assemble it with Economic PCBA. It is 52 × 46 mm, 2-layer. Rev A (a
+through-hole version with a 5 V module) was cancelled before it was built; it is in the git
+history.
+
+## Layout
+
+```
+xiao/        KiCad project, fab/ (Gerbers, BOM, CPL) and docs/ (schematic PDF, renders)
+esphome/     firmware: one file per network, plus common/ shared by all three
+case/        OpenSCAD case model and STL files
+scripts/     generators for the board, schematic and order files
+```
+
+**Status: designed and rule-checked, not built.** Measure the 5 V and 12 V rails on the first board
+before connecting fans or plugging in the XIAO (see [the first-board checks](#things-to-check-on-the-first-board)). The board passes KiCad DRC with 0 violations and
 0 unconnected items, and the schematic, PCB and `design.py` netlists match (33 nets / 142 pins).
 
 A second version with an ESP32-C6-MINI-1 module soldered to the board was designed and then set

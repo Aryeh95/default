@@ -383,6 +383,10 @@ def manual(r):
     r.add_via("GND", 46.4, 29.0, 0.8, 0.4, g)
     # --- CH224A --------------------------------------------------------------
     r.add_track("DPDM", T, [(11.0, 6.96), (12.0, 6.96)], 0.3)
+    # CH224A exposed pad (its only ground pin): two vias straight down to the bottom plane
+    g = r.add_track("GND", T, [(13.0, 9.0), (13.0, 10.2)], 0.6)
+    r.add_via("GND", 13.0, 9.0, 0.6, 0.3, g)
+    r.add_via("GND", 13.0, 10.2, 0.6, 0.3, g)
     # CFG2/SCL and CFG3/SDA: straight up out of the pin row, with a via so the router
     # can continue on either layer (prune_unused_escapes removes what it doesn't use)
     for net, x in (("SDA", 13.0), ("SCL", 14.0)):
@@ -554,7 +558,7 @@ def plan(board):
         ys = [p[1] for p in pos.get(n, [(0, 0)])]
         return max(xs) - min(xs) + max(ys) - min(ys)
 
-    first = [("VBUS", 0.5, {"bottom_cost": 3.0}), ("+12V", 0.25, {}), ("USB_DP", 0.25, {}), ("USB_DM", 0.25, {}),
+    first = [("VBUS", 0.8, {"bottom_cost": 3.0}), ("+12V", 0.25, {}), ("USB_DP", 0.25, {}), ("USB_DM", 0.25, {}),
              ("CC_A", 0.2, {}), ("CC_B", 0.2, {}), ("VHV", 0.4, {}),
              ("+5V", 0.4, {"via": (0.8, 0.4)}), ("XIAO_5V", 0.5, {"via": (0.8, 0.4)}),
              ("+3V3", 0.4, {"via": (0.8, 0.4)}), ("VSENSE", 0.25, {"bottom_cost": 1.8}),

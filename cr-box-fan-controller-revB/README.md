@@ -39,10 +39,16 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
 - **Fan-header peg holes** are 1.3 mm (Molex recommends 1.25 mm; the KiCad library has 1.1 mm) so
   machine-inserted headers seat flat.
 - **VBUS test pad (TP1)** next to the 12 V converter, for measuring the charger voltage.
-- **Wider supply track** (0.5 mm minimum) to the 5 V converter, no longer passing through a resistor pad.
+- **Wider supply tracks:** the charger input (VBUS) is 0.8 mm wide (was 0.5 mm) for 7-fan loads, and
+  no longer passes through a resistor pad on the way to the 5 V converter. The 12 V fan rail is 1 mm.
+- **CH224A ground pad** has two vias straight down to the bottom ground plane (its exposed pad is
+  its only ground pin).
+- **CH224A DP/DM** are shorted together at the chip and not connected to the USB-C socket, as the
+  datasheet describes for PD-only use. This turns off the QC/BC 1.2 fallbacks, which could only
+  offer 5–12 V anyway; the fans need the 15 V PD profile.
 - **Ground plane:** signal tracks on the bottom layer cut from about 260 mm to 150 mm. Estimated ground
   resistance from the USB-C socket and the 12 V output capacitors to the 12 V converter is now
-  0.5–0.65 mΩ (a solid plane would be about 0.4 mΩ).
+  0.5–0.7 mΩ (a solid plane would be about 0.4 mΩ).
 
 ### Things to check on the first board
 

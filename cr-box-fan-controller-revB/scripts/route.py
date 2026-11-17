@@ -383,6 +383,11 @@ def manual(r):
     r.add_via("GND", 46.4, 29.0, 0.8, 0.4, g)
     # --- CH224A --------------------------------------------------------------
     r.add_track("DPDM", T, [(11.0, 6.96), (12.0, 6.96)], 0.3)
+    # CFG2/SCL and CFG3/SDA: straight up out of the pin row, with a via so the router
+    # can continue on either layer (prune_unused_escapes removes what it doesn't use)
+    for net, x in (("SDA", 13.0), ("SCL", 14.0)):
+        g = r.add_track(net, T, [(x, 6.96), (x, 4.6)], 0.25)
+        r.add_via(net, x, 4.6, 0.6, 0.3, g)
     # --- 12 V buck (same layout as rev A) -------------------------------------
     g = r.add_track("SW", T, [(9.64, 27.0), (14.522, 27.0)], 0.6)
     r.add_track("SW", T, [(9.64, 27.0), (8.5, 27.0), (8.5, 29.3), (9.1, 29.9)], 0.25, g)
@@ -394,6 +399,9 @@ def manual(r):
     r.add_via("GND", 12.9, 29.7, 0.8, 0.4, g)
     r.add_track("GND", T, [(11.9, 28.6), (11.9, 30.3)], 0.5, g)
     r.add_via("GND", 11.9, 30.3, 0.8, 0.4, g)
+    # extra thermal vias in the ground copper next to the converter's GND pin
+    for vx, vy in ((10.7, 29.2), (10.6, 31.4), (13.3, 31.0)):
+        r.add_via("GND", vx, vy, 0.8, 0.4, g)
     g = r.add_track("GND", T, [(11.18, 23.9), (12.6, 23.6)], 0.4)
     r.add_via("GND", 12.6, 23.6, 0.8, 0.4, g)
     g = r.add_track("GND", T, [(3.78, 26.05), (3.78, 27.9)], 0.4)
@@ -535,7 +543,9 @@ def plan(board):
     pos = {}
     for fp in board.GetFootprints():
         for pad in fp.Pads():
-            if pad.GetNetname():
+            # the CH224A's I2C pins have manual escape vias; leave them out of the
+            # ordering so SDA/SCL keep their place among the short local nets
+            if pad.GetNetname() and not (fp.GetReference() == "U1" and pad.GetNetname() in ("SDA", "SCL")):
                 pos.setdefault(pad.GetNetname(), []).append(
                     (ToMM(pad.GetPosition().x), ToMM(pad.GetPosition().y)))
 
@@ -558,6 +568,34 @@ def plan(board):
     return out
 
 
+ESCAPES = [("SDA", 13.0, 6.96, 4.6), ("SCL", 14.0, 6.96, 4.6)]
+
+
+def prune_unused_escapes(board):
+    """Remove an escape via that nothing on the bottom layer reaches, and cut its
+    vertical stub back to the lowest point where a routed track joins it."""
+    eps = 0.02
+    for net, x, y0, y1 in ESCAPES:
+        tracks = [t for t in board.GetTracks() if t.GetNetname() == net]
+        via = [t for t in tracks if t.GetClass() == "PCB_VIA"
+               and abs(ToMM(t.GetPosition().x) - x) < eps and abs(ToMM(t.GetPosition().y) - y1) < eps]
+        segs = [t for t in tracks if t.GetClass() != "PCB_VIA"]
+        ends = lambda t: [(ToMM(t.GetStart().x), ToMM(t.GetStart().y)), (ToMM(t.GetEnd().x), ToMM(t.GetEnd().y))]
+        if not via or any(t.GetLayer() == pcbnew.B_Cu and any(abs(px - x) < eps and abs(py - y1) < eps
+                                                               for px, py in ends(t)) for t in segs):
+            continue
+        board.Remove(via[0])
+        stub = [t for t in segs if t.GetLayer() == pcbnew.F_Cu
+                and sorted(round(py, 2) for px, py in ends(t)) == sorted([round(y0, 2), round(y1, 2)])
+                and all(abs(px - x) < eps for px, py in ends(t))]
+        joins = [py for t in segs if t not in stub for px, py in ends(t)
+                 if abs(px - x) < eps and y1 - eps <= py <= y0 + eps]
+        if stub and joins:
+            top = min(joins)
+            stub[0].SetStart(VECTOR2I(FromMM(x), FromMM(y0)))
+            stub[0].SetEnd(VECTOR2I(FromMM(x), FromMM(top)))
+
+
 def main():
     board = pcbnew.LoadBoard(paths.PCB)
     for t in list(board.GetTracks()):
@@ -567,6 +605,7 @@ def main():
     for net, w, kw in plan(board):
         print("routing", net)
         r.route_net(net, w, **kw)
+    prune_unused_escapes(board)
     G.finish_silk(board)
     filler = pcbnew.ZONE_FILLER(board)
     filler.Fill(board.Zones())

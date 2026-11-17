@@ -5,7 +5,7 @@ everything else on the board surface-mount so JLCPCB can assemble it with Econom
 is 52 × 46 mm, 2-layer, with the same mounting holes and connectors as rev A.
 
 **Status: designed and rule-checked, not built.** The board passes KiCad DRC with 0 violations and
-0 unconnected items, and the schematic, PCB and `design.py` netlists match (33 nets / 140 pins).
+0 unconnected items, and the schematic, PCB and `design.py` netlists match (33 nets / 142 pins).
 
 A second version with an ESP32-C6-MINI-1 module soldered to the board was designed and then set
 aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.py` still supports it
@@ -22,6 +22,16 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
   checked for temperature at full load.
 - **5 V inductor:** FXL0518-100-M (10 µH, 2.5 A continuous, 3 A saturation) instead of a 1.95 A part,
   so a short on the 5 V header no longer saturates it before the converter's current limit trips.
+- **CH224A on the I2C bus:** its CFG2/SCL and CFG3/SDA pins join the XIAO's I2C bus (the datasheet
+  allows 3.3 V logic on them; the board's 4.7 k pull-ups serve both). The CH224A still requests
+  15 V by itself through its 56 k resistor. The firmware reads which protocol was negotiated and how
+  much current the charger offers ("Charger Max Current" / "Charger Max Power"), so you can see
+  whether a charger is big enough for your fans. The CH224A uses I2C address 0x22 or 0x23 (the
+  datasheet gives both); don't put a sensor at those addresses on the header.
+- **PWM driver base resistor R7** is 1 k (was 2.2 k), so Q3 stays saturated with 7 or more fans
+  pulling the PWM line up at once.
+- **Extra thermal vias** next to the 12 V converter's ground pin, spreading its heat into the
+  bottom copper.
 - **FAN2 tach** is read on its own pin (GPIO20) with its own 10 k pull-up and 10 k series resistor.
   FAN1's series resistor is also 10 k now, which protects the GPIO from fans that pull tach up to 12 V.
 - **USB-C socket:** 16-pin TYPE-C-31-M-12 (its data pins are unused).
@@ -40,6 +50,10 @@ aside, because JLCPCB only fits that module with Standard PCBA. `scripts/design.
   through R16 = 0 Ω), while its pin table says the pin tolerates 3.8 V. If PD negotiation misbehaves
   or U1 runs hot, this is the first thing to look at.
 - **12 V converter temperature** with all fans at 100 %.
+- **CH224A I2C:** check the boot log's I2C scan finds it at 0x22 or 0x23, and that "Charger Max
+  Current" matches the charger's label. If the CH224A misbehaves with the bus connected, the
+  sensors can be removed from the firmware, since it requests 15 V from its resistor with no I2C
+  traffic needed.
 - **Wi-Fi signal** with the XIAO in its sockets, compared with a bare XIAO (the 5 V converter is
   about 6 mm from the antenna end, 7.5 mm below it).
 - Pull the XIAO **straight up** out of the SMD sockets; they're held only by their solder pads.

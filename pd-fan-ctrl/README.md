@@ -102,6 +102,23 @@ in the git history.
    headers (locking ramp along the bottom board edge). L1 and L2 haven't been seen in JLCPCB's
    viewer yet; both are two-pad parts, so only their position matters.
 
+### Seeed Fusion PCBA
+
+The same board can be assembled by Seeed Fusion instead. Seeed buys parts by manufacturer part
+number, so it has its own files in `pcb/fab/`:
+
+- `*-gerbers.zip`, the same Gerbers as for JLCPCB.
+- `*-bom-seeed.csv` and `*-cpl-seeed.csv`: surface-mount parts only; you solder the fan headers.
+- `*-bom-seeed-fanhdr.csv` and `*-cpl-seeed-fanhdr.csv`: Seeed also fits the fan headers
+  (Molex 47053-1000, through-hole).
+- `*-assembly-top.pdf`: outlines, reference designators and pin-1 marks, for Seeed's
+  orientation check.
+
+The BOM has Designator, Manufacturer Part Number, Quantity and an LCSC link for each part, as in
+Seeed's template. The placement file uses KiCad's own rotations (the JLCPCB files carry JLCPCB's
+corrections). Several parts come from Chinese makers that Seeed may not stock (CH224A, the SMD
+sockets, both inductors); the links help their buyers, and Seeed may propose equivalents.
+
 ## XIAO notes
 
 - Pin use is the same as rev A, plus D9 (GPIO20) for FAN2 tach.

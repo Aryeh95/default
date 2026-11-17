@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import design as D
 
 from paths import ROOT, NAME, PCB, SCH
+from mpn import MPN
 
 FAB = os.path.join(ROOT, "fab")
 GERB = os.path.join(FAB, "gerbers")
@@ -84,6 +85,42 @@ def main():
                         rot += fix
                 w.writerow([ref, "%.3fmm" % pcbnew.ToMM(pos.x), "%.3fmm" % -pcbnew.ToMM(pos.y), "Top",
                             "%d" % (rot % 360)])
+
+    def write_seeed(suffix, with_tht):
+        """Seeed Fusion PCBA: BOM by manufacturer part number (Designator, MPN, Quantity,
+        link) and a pick-and-place file in KiCad's own rotation convention."""
+        refs = [r for r, p in D.PARTS.items() if p[5] or (with_tht and p[4])]
+        groups = {}
+        for ref in refs:
+            groups.setdefault(D.PARTS[ref][4], []).append(ref)
+        with open(os.path.join(FAB, NAME + "-bom-seeed" + suffix + ".csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["Designator", "Manufacturer Part Number", "Quantity", "Part Link"])
+            for lcsc, rs in sorted(groups.items(), key=lambda kv: key(sorted(kv[1], key=key)[0])):
+                _maker, mpn = MPN[lcsc]
+                w.writerow([",".join(sorted(rs, key=key)), mpn, len(rs),
+                            "https://www.lcsc.com/product-detail/%s.html" % lcsc])
+        with open(os.path.join(FAB, NAME + "-cpl-seeed" + suffix + ".csv"), "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["Designator", "Mid X", "Mid Y", "Layer", "Rotation"])
+            for ref in sorted(refs, key=key):
+                fp = fps[ref]
+                pos = fp.GetPosition()
+                if fp.HasThroughHolePads():
+                    pads = [p.GetPosition() for p in fp.Pads() if p.GetNumber()]
+                    pos = pcbnew.VECTOR2I((min(p.x for p in pads) + max(p.x for p in pads)) // 2,
+                                          (min(p.y for p in pads) + max(p.y for p in pads)) // 2)
+                w.writerow([ref, "%.3fmm" % pcbnew.ToMM(pos.x), "%.3fmm" % -pcbnew.ToMM(pos.y), "Top",
+                            "%d" % (fp.GetOrientationDegrees() % 360)])
+
+    write_seeed("", False)
+    write_seeed("-fanhdr", True)
+    # assembly drawing (outlines, reference designators, pin-1 marks) for checking orientation
+    svg = os.path.join(ROOT, "build", "assembly-top.svg")
+    run("kicad-cli", "pcb", "export", "svg", "-o", svg, "--layers", "F.Fab,F.SilkS,Edge.Cuts",
+        "--page-size-mode", "2", "--exclude-drawing-sheet", "--black-and-white", PCB)
+    run("rsvg-convert", "-f", "pdf", "-z", "4", "-b", "white", "-o",
+        os.path.join(FAB, NAME + "-assembly-top.pdf"), svg)
 
     # default order: SMT only (Economic PCBA); the -with-tht pair is for comparing prices
     write_bom_cpl("", False)

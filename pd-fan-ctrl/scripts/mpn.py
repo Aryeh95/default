@@ -1,0 +1,30 @@
+"""Manufacturer and manufacturer part number (MPN) for each LCSC part, for assembly
+services that buy parts by MPN (Seeed Fusion). Looked up from LCSC's product data."""
+
+MPN = {
+    "C15849": ("Samsung Electro-Mechanics", "CL10A105KB8NNNC"),
+    "C14663": ("YAGEO", "CC0603KRX7R9BB104"),
+    "C14858": ("Samsung Electro-Mechanics", "CL10C101JB8NNNC"),
+    "C13585": ("Samsung Electro-Mechanics", "CL31A106KBHNNNE"),
+    "C12891": ("Samsung Electro-Mechanics", "CL31A226KAHNNNE"),
+    "C2480": ("MDD(Microdiode Semiconductor)", "SS14"),
+    "C165948": ("Korean Hroparts Elec", "TYPE-C-31-M-12"),
+    "C19795120": ("MOLEX", "470533000"),
+    "C55218891": ("SHOU HAN", "PM2.54-1x7PLT-H5.0-R"),
+    "C305194": ("TAI-TECH", "TMPA0605S-150MN-D"),
+    "C475910": ("cjiang", "FXL0518-100-M"),
+    "C20526": ("JSCJ", "MMBT3904"),
+    "C17888": ("UNI-ROYAL", "1206W4F0000T5E"),
+    "C23206": ("UNI-ROYAL", "0603WAF5602T5E"),
+    "C25803": ("UNI-ROYAL", "0603WAF1003T5E"),
+    "C23186": ("UNI-ROYAL", "0603WAF5101T5E"),
+    "C25804": ("UNI-ROYAL", "0603WAF1002T5E"),
+    "C21190": ("UNI-ROYAL", "0603WAF1001T5E"),
+    "C22809": ("UNI-ROYAL", "0603WAF1502T5E"),
+    "C23162": ("UNI-ROYAL", "0603WAF4701T5E"),
+    "C21189": ("UNI-ROYAL", "0603WAF0000T5E"),
+    "C22797": ("UNI-ROYAL", "0603WAF1302T5E"),
+    "C42459160": ("WCH", "CH224A"),
+    "C311983": ("TI", "TPS54302DDCR"),
+    "C240840": ("MOLEX", "470531000"),
+}

@@ -132,6 +132,29 @@ port the first time.
   that turns itself off. Zigbee2MQTT may show the device as generic endpoints.
 - All three were compiled with ESPHome 2026.10.2 but none has run on hardware yet.
 
+### Other XIAO boards
+
+The board takes any XIAO ESP32 with the standard 14-pin layout. Pick yours in the `board:`
+line near the top of the firmware file; the board files in `esphome/boards/` hold each chip's
+settings and pin numbers.
+
+| Board file | XIAO | Networks | Antenna |
+|---|---|---|---|
+| `xiao-esp32c6.yaml` (default) | ESP32-C6 | Wi-Fi, Thread, Zigbee | On the board |
+| `xiao-esp32c5.yaml` | ESP32-C5 | Wi-Fi (2.4 and 5 GHz), Thread, Zigbee | External, U.FL |
+| `xiao-esp32c3.yaml` | ESP32-C3 | Wi-Fi | External, U.FL |
+| `xiao-esp32s3.yaml` | ESP32-S3 | Wi-Fi | External, U.FL |
+| `xiao-esp32s3-plus.yaml` | ESP32-S3 Plus | Wi-Fi | External, U.FL |
+
+- Boards with an external antenna come with a flexible one; stick it inside the case lid.
+- ESPHome warns about "strapping pins" when compiling for the C3, C5 and S3. The board holds
+  those pins at safe levels at power-on (see the notes in each board file), so the warnings are
+  expected. On the C3, D0 is also pulled low by the voltage divider when no charger is
+  connected; this only matters for the boot-button flashing mode, so check USB flashing on the
+  first C3.
+- The board was designed around the C6. The other boards' pins were checked against Seeed's pin
+  maps and their firmware compiles, but none has been tried on the board.
+
 ## Files
 
 | Path | What it is |
@@ -141,6 +164,7 @@ port the first time.
 | `pcb/fab/` | Gerbers, JLCPCB BOM and CPL files, hand-solder list |
 | `esphome/pd-fan-ctrl-wifi.yaml`, `-thread.yaml`, `-zigbee.yaml` | Firmware, one per network (see [Firmware](#firmware)) |
 | `esphome/common/pd-fan-ctrl-core.yaml` | Fan control and sensors shared by all three |
+| `esphome/boards/` | Chip settings and pin numbers for each XIAO |
 | `case/` | OpenSCAD case model and STL files |
 | `scripts/` | Generators |
 

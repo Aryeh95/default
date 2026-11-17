@@ -1,4 +1,4 @@
-# PD fan controller, rev B (Seeed XIAO ESP32-C6): Thread version.
+# PD fan controller, rev B: Thread version.
 # Same entities as the Wi-Fi version, reached over a Thread network instead.
 #
 # Needs a Thread border router on your network (Home Assistant Connect ZBT-1/ZBT-2,
@@ -13,6 +13,8 @@ substitutions:
   friendly_name: PD Fan Controller
 
 packages:
+  # Your XIAO: xiao-esp32c6 or xiao-esp32c5 (the others have no Thread radio)
+  board: !include boards/xiao-esp32c6.yaml
   core: !include common/pd-fan-ctrl-core.yaml
 
 api:

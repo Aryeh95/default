@@ -1,4 +1,4 @@
-# PD fan controller, rev B (Seeed XIAO ESP32-C6): Zigbee version.
+# PD fan controller, rev B: Zigbee version.
 # Joins ZHA or Zigbee2MQTT as a Zigbee router (it's mains powered, so it also extends
 # the mesh). There's no Wi-Fi in this build, so firmware updates go over the XIAO's
 # USB port.
@@ -17,6 +17,8 @@ substitutions:
   friendly_name: PD Fan Controller
 
 packages:
+  # Your XIAO: xiao-esp32c6 or xiao-esp32c5 (the others have no Zigbee radio)
+  board: !include boards/xiao-esp32c6.yaml
   core: !include common/pd-fan-ctrl-core.yaml
 
 zigbee:

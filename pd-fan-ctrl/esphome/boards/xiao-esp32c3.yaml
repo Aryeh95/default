@@ -1,0 +1,25 @@
+# Seeed XIAO ESP32-C3: chip settings and the GPIO behind each XIAO pin used by the board.
+# External antenna on U.FL. Wi-Fi only.
+# D0 (GPIO2), D8 (GPIO8) and D9 (GPIO9) are strapping pins. The tach pull-ups hold
+# D8/D9 high at power-on (normal boot) and the fans are unpowered then, so they
+# can't pull them low. ESPHome warns about these pins when compiling; that's expected.
+# The C3 has no hardware pulse counter, so fan RPM is counted in software.
+
+substitutions:
+  pin_d0: GPIO2
+  pin_d1: GPIO3
+  pin_d2: GPIO4
+  pin_d3: GPIO5
+  pin_d4: GPIO6
+  pin_d5: GPIO7
+  pin_d6: GPIO21
+  pin_d7: GPIO20
+  pin_d8: GPIO8
+  pin_d9: GPIO9
+
+esp32:
+  board: esp32-c3-devkitm-1
+  variant: esp32c3
+  flash_size: 4MB
+  framework:
+    type: esp-idf

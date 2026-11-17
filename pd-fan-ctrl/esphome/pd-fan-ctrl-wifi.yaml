@@ -1,4 +1,4 @@
-# PD fan controller, rev B (Seeed XIAO ESP32-C6): Wi-Fi version.
+# PD fan controller, rev B: Wi-Fi version.
 # Fan control and sensors live in common/pd-fan-ctrl-core.yaml; this file adds Wi-Fi
 # and the Home Assistant API. Needs wifi_ssid and wifi_password in secrets.yaml.
 
@@ -7,6 +7,8 @@ substitutions:
   friendly_name: PD Fan Controller
 
 packages:
+  # Your XIAO: xiao-esp32c6, xiao-esp32c5, xiao-esp32c3, xiao-esp32s3 or xiao-esp32s3-plus
+  board: !include boards/xiao-esp32c6.yaml
   core: !include common/pd-fan-ctrl-core.yaml
 
 api:

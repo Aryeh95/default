@@ -1,0 +1,23 @@
+# Seeed XIAO ESP32-C5: chip settings and the GPIO behind each XIAO pin used by the board.
+# External antenna on U.FL. Dual-band Wi-Fi; also Thread or Zigbee.
+# D2 (GPIO25) and D3 (GPIO7) are strapping pins for SDIO timing and the JTAG
+# source; neither matters for a normal boot.
+
+substitutions:
+  pin_d0: GPIO1
+  pin_d1: GPIO0
+  pin_d2: GPIO25
+  pin_d3: GPIO7
+  pin_d4: GPIO23
+  pin_d5: GPIO24
+  pin_d6: GPIO11
+  pin_d7: GPIO12
+  pin_d8: GPIO8
+  pin_d9: GPIO9
+
+esp32:
+  board: esp32-c5-devkitc-1
+  variant: esp32c5
+  flash_size: 8MB
+  framework:
+    type: esp-idf

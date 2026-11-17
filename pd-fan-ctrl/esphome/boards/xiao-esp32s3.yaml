@@ -1,0 +1,22 @@
+# Seeed XIAO ESP32-S3: chip settings and the GPIO behind each XIAO pin used by the board.
+# External antenna on U.FL. Wi-Fi only.
+# D2 (GPIO3) is a strapping pin for the JTAG source; it doesn't affect a normal boot.
+
+substitutions:
+  pin_d0: GPIO1
+  pin_d1: GPIO2
+  pin_d2: GPIO3
+  pin_d3: GPIO4
+  pin_d4: GPIO5
+  pin_d5: GPIO6
+  pin_d6: GPIO43
+  pin_d7: GPIO44
+  pin_d8: GPIO7
+  pin_d9: GPIO8
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 8MB
+  framework:
+    type: esp-idf
